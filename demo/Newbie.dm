@@ -9,6 +9,8 @@
 
 
 /datum/dmui_form/Newbie
+	form_window = "window=Newbie"
+
 	var/name
 
 	var/gender

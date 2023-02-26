@@ -50,11 +50,15 @@
 	/// Title of the form.
 	var/tmp/form_title
 
+	/// TODO: dmui_window
+	/// The ID of the skin window used.
+	var/tmp/window_key
+
 	/// browse() parameters to use for forms in DreamSeeker.
 	var/tmp/form_window
 
 	/// User may submit this form multiple times.
-	var/tmp/form_reusable
+	var/tmp/form_reusable = FALSE
 
 	/// Web browser submission method (must be "get" in BYOND mode).
 	var/tmp/form_method = "get"
@@ -81,7 +85,7 @@
 	var/tmp/form_enctype
 
 	/// False for web clients.
-	var/tmp/form_byond_mode = 1
+	var/tmp/form_byond_mode = TRUE
 
 	var/tmp/form_default_size
 
@@ -91,19 +95,17 @@
 	var/tmp/form_var_prefix
 
 	/// True if this is a sub-form.
-	var/tmp/form_is_sub
+	var/tmp/form_is_sub = FALSE
 
 	/// Hides the entire form (used by GetHiddenHtml()).
 	var/tmp/form_hidden
 
 
 	//# Constants
-
 	var/const/AUTO = null
 
 
-	//# Input types
-
+	//## Input types
 	var/const/TEXT_ITYPE  = 1
 	var/const/NUM_ITYPE   = 2
 	var/const/ICON_ITYPE  = 3
@@ -111,8 +113,7 @@
 	var/const/FILE_ITYPE  = 5
 
 
-	//# Interface elements
-
+	//## Interface elements
 	var/const/TEXT             = 1
 	var/const/PASSWORD         = 2
 	var/const/SELECT           = 3
@@ -134,10 +135,8 @@
 	var/const/RADIO_LIST       = 19
 	var/const/HIDDEN_LIST      = 20
 
-
 	var/const/SUBMIT_CLICK = 1
 	var/const/BUTTON_CLICK = 2
-
 
 	var/const/NO_WRAP   = "off"
 	var/const/HARD_WRAP = "hard"
@@ -156,7 +155,7 @@
 	if(usr != user)
 		world.log << "Illegal form call by ([usr],[type])."
 
-		return //do not do normal wrapup
+		return //? Do not do normal wrapup.
 
 	if(!form_sub_path)
 		if(form_byond_mode)
@@ -217,7 +216,6 @@
 
 				if(RADIO_OPTION,RESET) //these should never get set
 					world.log << "Illegal form input from ([usr]): ([href])."
-
 					goto wrapup
 
 				if(BUTTON) //only happens when button is clicked--not when form is submitted
@@ -231,16 +229,13 @@
 
 				if(PROMPT)
 					if(form_byond_mode)
-
 						StartWaiting()
 
 						switch(fv.input_type)
 							if(ICON_ITYPE)
-
 								var/pval = (input(usr,fv.label || fv.name) as icon|null)
 
 								if(!pval && vars[fv.name] && alert("Retain previous setting?",,"Yes","No") == "Yes")
-
 									pval = vars[fv.name]
 
 								vars[fv.name] = pval
@@ -249,7 +244,6 @@
 								var/pval = (input(usr,fv.label || fv.name) as sound|null)
 
 								if(!pval && vars[fv.name] && alert("Retain previous setting?",,"Yes","No") == "Yes")
-
 									pval = vars[fv.name]
 
 								vars[fv.name] = pval
@@ -258,7 +252,6 @@
 								var/pval = (input(usr,fv.label || fv.name) as file|null)
 
 								if(!pval && vars[fv.name] && alert("Retain previous setting?",,"Yes","No") == "Yes")
-
 									pval = vars[fv.name]
 
 								vars[fv.name] = pval
@@ -281,14 +274,14 @@
 			vars[fv.name] = val
 
 
-		else //no value submitted
+		else //? No value was submitted.
 			switch(fv.interface)
 				if(CHECKBOX)
 					vars[fv.name] = null
 
 
 
-	//do sub-forms
+	//? Do sub-forms.
 
 	for(fv in form_vars)
 		if(fv.interface == SUB_FORM)

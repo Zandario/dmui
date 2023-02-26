@@ -254,7 +254,7 @@
 	var/html
 	var/body
 	var/datum/dmui_var/fv
-	var/submit_only = 1
+	var/submit_only = TRUE
 
 	form_is_sub = (parent_form && parent_form != src) ? TRUE : FALSE
 
@@ -298,9 +298,8 @@
 
 		switch(fv.interface)
 			if(SUBMIT,RESET,CHECKBOX)
-				//? Uhh... What? @Zandario
 			else
-				submit_only = 0
+				submit_only = FALSE
 
 	if(!form_is_sub)
 		//? Add the <form> wrapper.
@@ -409,6 +408,8 @@
 	if(!user.client)
 		//? No sense in creating form for NPC.
 		return
+
+	window_key = "\ref[type]"
 
 	Initialize()
 

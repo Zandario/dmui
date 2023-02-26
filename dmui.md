@@ -371,7 +371,7 @@ You define the `HtmlLayout()` procedure to return the HTML text describing the f
 
 Perhaps the slickest part of the Form programming interface is how you embed each interface element in your form layout text. Before `HtmlLayout()` is called, each interface variable is automatically assigned to the corresponding HTML element. All you have to do is insert the variable into the layout text. That elliminates most of the noisy HTML so you can see what you are doing.
 
-If you are familiar with HTML, you may have noticed that the form layout does not include the actual `&ls;FORM>` element. That is automatically generated for you before the form is submitted to the user.
+If you are familiar with HTML, you may have noticed that the form layout does not include the actual `<our_form>` element. That is automatically generated for you before the form is submitted to the user.
 
 ### `ProcessForm()`
 
