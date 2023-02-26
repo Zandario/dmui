@@ -5,7 +5,7 @@
 	var/datum/dmui_form/F
 
 	for(F)
-		if(F.form_usr == mob)
+		if(F.user == mob)
 			del F
 
 	return ..()

@@ -37,7 +37,6 @@
 
 			control = next_control
 
-
 		if(control)
 			control = copytext(V,control+1)
 
@@ -46,8 +45,6 @@
 
 			if("[text2num(control)]" == control)
 				continue
-
-
 
 		if(issaved(vars[V]) && V != "tag")
 			var/datum/dmui_var/fv = new()
@@ -244,11 +241,8 @@
 
 /// Sets form_hidden and calls GetHtml().
 /datum/dmui_form/proc/GetHiddenHtml(parent_form)
-
 	form_hidden++
-
 	var/target_form = GetHtml(parent_form)
-
 	form_hidden--
 
 	return target_form
@@ -258,26 +252,17 @@
 /datum/dmui_form/proc/GetHtml(datum/dmui_form/parent_form)
 
 	var/html
-
 	var/body
-
 	var/datum/dmui_var/fv
-
 	var/submit_only = 1
-
-
 
 	form_is_sub = (parent_form && parent_form != src) ? TRUE : FALSE
 
-
-
 	//? Generate html code for each input variable
-
 	for(fv in form_vars)
 		fv.value = vars[fv.name]
 
 		switch(fv.interface)
-
 			if(RADIO_OPTION)
 				fv.checked = (vars[fv.radio_name] == fv.value)
 
@@ -296,25 +281,20 @@
 				if(var_values in vars)
 					fv.values = vars[var_values]
 
-
-
 		fv.html_value = html_encode(fv.value)
 
 		vars[fv.name] = fv.MakeInputTag(src, form_var_prefix)
 
-
 	if(!form_hidden)
-		body = HtmlLayout() //? User generates html by inserting form variables
-
+		//? User generates html by inserting form variables.
+		body = HtmlLayout()
 
 	//? Restore variables and tag on hidden ones
-
 	for(fv in form_vars)
 		if(fv.hidden || form_hidden)
 			body += vars[fv.name]
 
 		vars[fv.name] = fv.value
-
 
 		switch(fv.interface)
 			if(SUBMIT,RESET,CHECKBOX)
@@ -322,12 +302,10 @@
 			else
 				submit_only = 0
 
-
 	if(!form_is_sub)
 		//? Add the <form> wrapper.
 
 		var/encoding
-
 		var/method = form_method
 
 		if(form_enctype)
@@ -338,63 +316,47 @@
 			method = "get"
 
 		html = "<form method=[method][encoding] action='[GetSubmitUrl(form_sub_path)]' [form_extra]>\n"
-
 		html += "<input type=hidden name=src value='[html_encode("\ref[src]")]'>\n"
 
 		if(submit_only)
 			//? Prevent solitary submit button from submitting an empty set of params (so form will be processed).
 			html += "<input type=hidden name=submit value=1>\n"
-
 		html += "[body]\n</form>"
-
 	else
 		html = body
 
 	return html
 
 
-
 /datum/dmui_form/proc/GetSubmitUrl(sub_path)
-
 	if(form_url)
 		return form_url
 
 	var/url = "byond://"
-
 	if(sub_path)
 		url = "[url]/[sub_path]"
 
 	return url
 
 
-
 /// Return URL containing all form variables or specified parameters.
-/datum/dmui_form/proc/GetSelfUrl(params, mob/U=usr, passive)
+/datum/dmui_form/proc/GetSelfUrl(params, mob/user, passive)
 
 	var/datum/dmui_var/fv
-
 	var/plist[0]
 
-	usr = U
 
-	if(ismob(params) && !U)
+	if(ismob(params) && !user)
 		//? Shuffle args around for backwards compatibility
-
-		U = params
-
+		user = params
 		params = null
-
-
 
 	if(params || params == "")
 		if(istext(params))
 			plist = params2list(params)
-
 		else
 			plist = params
-
 	else
-
 		for(fv in form_vars)
 			switch(fv.interface)
 				if(RADIO_OPTION,BUTTON,PROMPT,SUBMIT,RESET)
@@ -402,22 +364,16 @@
 
 			plist[fv.name] = vars[fv.name]
 
-
-
 	plist["src"] = src
 
 	if(!passive)
 		StartWaiting()
 
-
-
 	return html_encode("[GetSubmitUrl(form_sub_path)]?[list2params(plist)]")
 
 
-
 /datum/dmui_form/proc/GetButtonScript(name, datum/dmui_form/parent_form)
-	return {"document.location.href="[GetSelfUrl(form_var_prefix + name,form_usr,passive=1)]""}
-
+	return {"document.location.href="[GetSelfUrl(form_var_prefix + name, user, passive=TRUE)]""}
 
 
 /datum/dmui_form/proc/GetHtmlHead()
@@ -427,9 +383,7 @@
 
 /// Returns form as a stand-alone document.
 /datum/dmui_form/proc/GetHtmlDoc()
-
 	var/head = GetHtmlHead()
-
 	var/body = GetHtml()
 
 	return {"\
@@ -446,42 +400,30 @@
  * Call this to send form to user.
  * Do everything except display the form.
  */
-/datum/dmui_form/proc/PreDisplayForm(mob/U=usr)
-
+/datum/dmui_form/proc/PreDisplayForm(mob/user)
 	if(form_waiting)
-		world.log << "Error: DisplayForm([U]) called before previous submission finished."
-
+		world.log << "Error: DisplayForm([user]) called before previous submission finished."
 		form_waiting = null
-
 		form_wait_count = 0
 
-	usr = U
-
-	if(!usr.client)
+	if(!user.client)
 		//? No sense in creating form for NPC.
 		return
 
 	Initialize()
 
-
 	for(var/datum/dmui_var/fv in form_vars)
 		if(fv.interface == SUB_FORM)
 			var/datum/dmui_form/sf = vars[fv.name]
-
 			//TODO: could call sf.PreDisplayForm() here but code currently assumes lack of StartWaiting() call on sub-forms
-
 			sf.Initialize()
 
 	StartWaiting()
 
 
-/datum/dmui_form/proc/DisplayForm(mob/U=usr)
-
-	usr = U
-
-	PreDisplayForm()
-
-	usr << browse(GetHtmlDoc(), form_window)
+/datum/dmui_form/proc/DisplayForm(mob/user)
+	PreDisplayForm(user)
+	user << browse(GetHtmlDoc(), form_window)
 
 
 /**
@@ -490,45 +432,32 @@
  * This is primarily used by CGI scripts on the web
  * optional params list contains the pre-parsed contents of href
  */
-/datum/dmui_form/proc/SubmitForm(href, mob/U=usr, params)
-
-	usr = U
-
+/datum/dmui_form/proc/SubmitForm(href, mob/user, params)
 	if(!form_wait_count)
 		StartWaiting()
 
-	return Topic(href,params)
-
-
+	return Topic(href, params)
 
 
 /datum/dmui_form/proc/StartWaiting()
-
-	form_usr = usr
-
+	user = usr
 	form_waiting = src //avoid garbage collector
-
 	form_wait_count += 1
 
 
-
 /datum/dmui_form/proc/StopWaiting()
-
 	if(form_wait_count)
 		form_wait_count -= 1
-
 
 	if(!form_wait_count)
 		if(form_reusable)
 			//? Reset wait counter.
 			form_wait_count = 1
-
 		else
-			form_usr = null
+			user = null
 			form_waiting = null
 
 		ProcessForm()
-
 
 
 /datum/dmui_form/proc/Capitalize(txt)
@@ -543,11 +472,8 @@
  * It does make rapid form development a breeze, though.
  */
 /datum/dmui_form/proc/HtmlLayout()
-
 	var/datum/dmui_var/fv
-
 	var/html
-
 
 	for(fv in form_vars)
 		if(fv.hidden || form_hidden)
@@ -564,11 +490,8 @@
 		if(istype(value,/list))
 			for(var/V in value)
 				html += "<br>\n"
-
 				html += value[V]
-
 				html += V
-
 		else
 			html += value
 
@@ -578,13 +501,11 @@
 		html += "<br>\n"
 
 
-	//Put the submit button at the bottom
-
+	//? Put the submit button at the bottom.
 	for(fv in form_vars)
 		if(fv.interface != SUBMIT && fv.interface != RESET)
 			continue
 
 		html += vars[fv.name]
-
 
 	return html

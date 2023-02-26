@@ -39,7 +39,6 @@
 /datum/dmui_form
 
 	var/submit = "Submit"
-
 	var/reset  = "Reset"
 
 	/// Where to send form for processing.
@@ -48,6 +47,7 @@
 	/// Extra path info after the name of this .dmb
 	var/tmp/form_sub_path
 
+	/// Title of the form.
 	var/tmp/form_title
 
 	/// browse() parameters to use for forms in DreamSeeker.
@@ -63,13 +63,13 @@
 	var/tmp/form_extra
 
 
-
 	//# internal stuff (no peeking)
 
 	/// List of user-defined form variables.
 	var/tmp/datum/dmui_var/form_vars[0]
 
-	var/tmp/mob/form_usr
+	/// The mob who opened/is using the UI.
+	var/tmp/mob/user
 
 	/// Doubles as a self-reference to prevent auto-deletion by garbage collector.
 	var/tmp/form_waiting
@@ -152,18 +152,18 @@
 
 
 
-/datum/dmui_form/Topic(href,params[])
-	if(usr != form_usr)
+/datum/dmui_form/Topic(href, params[])
+	if(usr != user)
 		world.log << "Illegal form call by ([usr],[type])."
 
 		return //do not do normal wrapup
 
 	if(!form_sub_path)
 		if(form_byond_mode)
-			if(findtext(href,"/",1,2))
-				var/qry = findtext(href,"?")
+			if(findtext(href, "/", 1, 2))
+				var/qry = findtext(href, "?")
 
-				form_sub_path = copytext(href,2,qry)
+				form_sub_path = copytext(href, 2, qry)
 
 
 	var/datum/dmui_var/fv

@@ -2,7 +2,7 @@
 
 	var/datum/dmui_form/Newbie/frm = new()
 
-	frm.DisplayForm() //? Send usr the form.
+	frm.DisplayForm(src) //? Send usr the form.
 
 /mob/var/race //human, ogre, or jellyfish
 
