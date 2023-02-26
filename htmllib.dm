@@ -712,7 +712,7 @@
 
 
 /// Generate the html for an input variable.
-FormVar/MakeInputTag(Form/form, var_prefix)
+/FormVar/MakeInputTag(Form/form, var_prefix)
 
 	var/html
 
@@ -976,7 +976,7 @@ FormVar/MakeInputTag(Form/form, var_prefix)
  * This is primarily used by CGI scripts on the web
  * optional params list contains the pre-parsed contents of href
  */
-Form/SubmitForm(href, mob/U=usr, params)
+/Form/SubmitForm(href, mob/U=usr, params)
 
 	usr = U
 
