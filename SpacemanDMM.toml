@@ -1,4 +1,4 @@
-environment = "htmllib.dme"
+environment = "dmui.dme"
 
 [langserver]
 dreamchecker = true

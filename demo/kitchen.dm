@@ -1,10 +1,10 @@
 /mob/verb/KitchenForm()
 
-	var/Form/Kitchen/form = new()
+	var/datum/dmui_form/Kitchen/form = new()
 
 	form.DisplayForm() //? Send usr the form.
 
-/Form/Kitchen
+/datum/dmui_form/Kitchen
 	form_window = "window=KitchenForm"
 
 	var/text

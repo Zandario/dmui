@@ -1,4 +1,4 @@
-/FormVar
+/datum/dmui_var
 	var/name
 	var/value
 	var/html_value
@@ -16,10 +16,10 @@
 	var/validate = TRUE
 	var/clickproc
 	var/click_script
-	var/Form/FORM
+	var/datum/dmui_form/FORM
 
 /// Generate the html for an input variable.
-/FormVar/proc/MakeInputTag(Form/form, var_prefix)
+/datum/dmui_var/proc/MakeInputTag(datum/dmui_form/form, var_prefix)
 
 	var/html
 
@@ -55,10 +55,10 @@
 		else if(input_type == FORM.FILE_ITYPE)
 			interface = FORM.PROMPT_FOR_FILE
 
-		else if(findtext(size,"x"))
+		else if(findtext(size, "x"))
 			interface = FORM.TEXTAREA
 
-		else if(istype(value,/Form))
+		else if(istype(value, /datum/dmui_form))
 			interface = FORM.SUB_FORM
 
 		else
@@ -209,7 +209,7 @@
 
 
 		if(FORM.SUB_FORM)
-			var/Form/sf = value
+			var/datum/dmui_form/sf = value
 
 			if(hidden || form.form_hidden)
 				html = sf.GetHiddenHtml(form)

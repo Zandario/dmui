@@ -1,4 +1,42 @@
-/Form
+/**
+ *
+ * HTML Library
+ *
+ * Version: 2.0   (2023-02-26) // Restructure by Zandario
+ *
+ * Version: 1.9   (2023-02-26) // Modern Formatting by Zandario
+ *
+ * Version: 1.8   (2003-01-29)
+ *
+ * Version: 1.7   (2002-03-12)
+ *
+ * Version: 1.6   (2002-02-05)
+ *
+ * Version: 1.5   (2001-11-02)
+ *
+ * Version: 1.4   (2001-03-24)
+ *
+ * Version: 1.3   (2001-01-30)
+ *
+ * Version: 1.2   (2001-01-18)
+ *
+ * Version: 1.1   (2000-10-11)
+ *
+ * Version: 1.0   (2000-09-16)
+ *
+ *
+ *
+ * To create a new type of form, you derive one from the base Form object.
+ *
+ * The variables you define are automatically written to and read from the form.
+ *
+ * To define how the form looks, you override HtmlLayout().
+ *
+ *
+ * See `htmllib.html` for the details.
+ *
+ */
+/datum/dmui_form
 
 	var/submit = "Submit"
 
@@ -29,7 +67,7 @@
 	//# internal stuff (no peeking)
 
 	/// List of user-defined form variables.
-	var/tmp/FormVar/form_vars[0]
+	var/tmp/datum/dmui_var/form_vars[0]
 
 	var/tmp/mob/form_usr
 
@@ -107,14 +145,14 @@
 
 
 
-/Form/New()
+/datum/dmui_form/New()
 	MakeFormVarList()
 	return ..()
 
 
 
 
-/Form/Topic(href,params[])
+/datum/dmui_form/Topic(href,params[])
 	if(usr != form_usr)
 		world.log << "Illegal form call by ([usr],[type])."
 
@@ -128,7 +166,7 @@
 				form_sub_path = copytext(href,2,qry)
 
 
-	var/FormVar/fv
+	var/datum/dmui_var/fv
 
 	for(fv in form_vars)
 		var/html_name = form_var_prefix + fv.name
@@ -254,7 +292,7 @@
 
 	for(fv in form_vars)
 		if(fv.interface == SUB_FORM)
-			var/Form/sf = vars[fv.name]
+			var/datum/dmui_form/sf = vars[fv.name]
 
 			var/ret = sf.SubmitForm(href,usr,params)
 

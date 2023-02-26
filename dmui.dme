@@ -1,0 +1,27 @@
+// DM Environment file for dmui.dme
+// All manual changes should be made outside the BEGIN_ and END_ blocks.
+// New source code should be placed in .dm files: choose File/New --> Code File.
+
+// BEGIN_INTERNALS
+// END_INTERNALS
+
+// BEGIN_FILE_DIR
+#define FILE_DIR .
+// END_FILE_DIR
+
+// BEGIN_PREFERENCES
+// END_PREFERENCES
+
+// BEGIN_INCLUDE
+#include "src\dmui_client.dm"
+#include "src\dmui_form.dm"
+#include "src\dmui_form_procs.dm"
+#include "src\dmui_var.dm"
+// END_INCLUDE
+
+// BEGIN_DEMO
+#ifdef __MAIN__
+#include "demo\kitchen.dm"
+#include "demo\Newbie.dm"
+#endif
+ // END_DEMO

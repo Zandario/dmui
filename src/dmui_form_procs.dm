@@ -1,15 +1,13 @@
 /// Called in DisplayForm().
-/Form/proc/Initialize()
+/datum/dmui_form/proc/Initialize()
 	return
 
 /// Called when the form is complete.
-/Form/proc/ProcessForm()
+/datum/dmui_form/proc/ProcessForm()
 	return
 
-
-
 /// Examines user-defined variables and creates list of form interface elements.
-/Form/proc/MakeFormVarList(parent_form)
+/datum/dmui_form/proc/MakeFormVarList(parent_form)
 
 	var/V
 
@@ -52,7 +50,7 @@
 
 
 		if(issaved(vars[V]) && V != "tag")
-			var/FormVar/fv = new()
+			var/datum/dmui_var/fv = new()
 
 			fv.name = V
 
@@ -133,7 +131,7 @@
 					fv.interface = RADIO
 
 
-					var/FormVar/rv = new()
+					var/datum/dmui_var/rv = new()
 
 					rv.interface = RADIO_OPTION
 
@@ -179,7 +177,7 @@
 
 			if(fv.interface == AUTO || fv.interface == SUB_FORM)
 
-				var/Form/sf = vars[fv.name]
+				var/datum/dmui_form/sf = vars[fv.name]
 
 				if(istype(sf))
 					//TODO: make sure prefix plus sub-form variables do not conflict with any others on this form
@@ -231,21 +229,21 @@
 
 
 
-/Form/proc/SetVarPrefix(var_prefix)
+/datum/dmui_form/proc/SetVarPrefix(var_prefix)
 
-	var/FormVar/fv
+	var/datum/dmui_var/fv
 
 	form_var_prefix = var_prefix
 
 	for(fv in form_vars)
 		if(fv.interface == SUB_FORM)
-			var/Form/sf = vars[fv.name]
+			var/datum/dmui_form/sf = vars[fv.name]
 
 			sf.SetVarPrefix("[form_var_prefix][fv.name]_")
 
 
 /// Sets form_hidden and calls GetHtml().
-/Form/proc/GetHiddenHtml(parent_form)
+/datum/dmui_form/proc/GetHiddenHtml(parent_form)
 
 	form_hidden++
 
@@ -257,13 +255,13 @@
 
 
 /// Set up variables and call user-defined HtmlLayout().
-/Form/proc/GetHtml(Form/parent_form)
+/datum/dmui_form/proc/GetHtml(datum/dmui_form/parent_form)
 
 	var/html
 
 	var/body
 
-	var/FormVar/fv
+	var/datum/dmui_var/fv
 
 	var/submit_only = 1
 
@@ -356,7 +354,7 @@
 
 
 
-/Form/proc/GetSubmitUrl(sub_path)
+/datum/dmui_form/proc/GetSubmitUrl(sub_path)
 
 	if(form_url)
 		return form_url
@@ -371,9 +369,9 @@
 
 
 /// Return URL containing all form variables or specified parameters.
-/Form/proc/GetSelfUrl(params, mob/U=usr, passive)
+/datum/dmui_form/proc/GetSelfUrl(params, mob/U=usr, passive)
 
-	var/FormVar/fv
+	var/datum/dmui_var/fv
 
 	var/plist[0]
 
@@ -417,18 +415,18 @@
 
 
 
-/Form/proc/GetButtonScript(name, Form/parent_form)
+/datum/dmui_form/proc/GetButtonScript(name, datum/dmui_form/parent_form)
 	return {"document.location.href="[GetSelfUrl(form_var_prefix + name,form_usr,passive=1)]""}
 
 
 
-/Form/proc/GetHtmlHead()
+/datum/dmui_form/proc/GetHtmlHead()
 	if(form_title)
 		return "<title>[form_title]</title>"
 
 
 /// Returns form as a stand-alone document.
-/Form/proc/GetHtmlDoc()
+/datum/dmui_form/proc/GetHtmlDoc()
 
 	var/head = GetHtmlHead()
 
@@ -448,7 +446,7 @@
  * Call this to send form to user.
  * Do everything except display the form.
  */
-/Form/proc/PreDisplayForm(mob/U=usr)
+/datum/dmui_form/proc/PreDisplayForm(mob/U=usr)
 
 	if(form_waiting)
 		world.log << "Error: DisplayForm([U]) called before previous submission finished."
@@ -466,9 +464,9 @@
 	Initialize()
 
 
-	for(var/FormVar/fv in form_vars)
+	for(var/datum/dmui_var/fv in form_vars)
 		if(fv.interface == SUB_FORM)
-			var/Form/sf = vars[fv.name]
+			var/datum/dmui_form/sf = vars[fv.name]
 
 			//TODO: could call sf.PreDisplayForm() here but code currently assumes lack of StartWaiting() call on sub-forms
 
@@ -477,7 +475,7 @@
 	StartWaiting()
 
 
-/Form/proc/DisplayForm(mob/U=usr)
+/datum/dmui_form/proc/DisplayForm(mob/U=usr)
 
 	usr = U
 
@@ -492,7 +490,7 @@
  * This is primarily used by CGI scripts on the web
  * optional params list contains the pre-parsed contents of href
  */
-/Form/proc/SubmitForm(href, mob/U=usr, params)
+/datum/dmui_form/proc/SubmitForm(href, mob/U=usr, params)
 
 	usr = U
 
@@ -504,7 +502,7 @@
 
 
 
-/Form/proc/StartWaiting()
+/datum/dmui_form/proc/StartWaiting()
 
 	form_usr = usr
 
@@ -514,7 +512,7 @@
 
 
 
-/Form/proc/StopWaiting()
+/datum/dmui_form/proc/StopWaiting()
 
 	if(form_wait_count)
 		form_wait_count -= 1
@@ -533,7 +531,7 @@
 
 
 
-/Form/proc/Capitalize(txt)
+/datum/dmui_form/proc/Capitalize(txt)
 	return uppertext(copytext(txt, 1, 2)) + copytext(txt, 2)
 
 
@@ -544,9 +542,9 @@
  * It makes a very simple (and probably ugly) form interface for the given variables.
  * It does make rapid form development a breeze, though.
  */
-/Form/proc/HtmlLayout()
+/datum/dmui_form/proc/HtmlLayout()
 
-	var/FormVar/fv
+	var/datum/dmui_var/fv
 
 	var/html
 

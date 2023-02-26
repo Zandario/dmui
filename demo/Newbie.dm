@@ -1,6 +1,6 @@
 /mob/verb/NewbieForm()
 
-	var/Form/Newbie/frm = new()
+	var/datum/dmui_form/Newbie/frm = new()
 
 	frm.DisplayForm() //? Send usr the form.
 
@@ -8,7 +8,7 @@
 
 
 
-/Form/Newbie
+/datum/dmui_form/Newbie
 	var/name
 
 	var/gender
@@ -21,13 +21,13 @@
 	var/race_values = list("human","ogre","jellyfish")
 
 
-/Form/Newbie/Initialize()
+/datum/dmui_form/Newbie/Initialize()
 	name   = usr.name
 	gender = usr.gender
 	race   = usr.race
 
 
-/Form/Newbie/ProcessForm()
+/datum/dmui_form/Newbie/ProcessForm()
 
 	usr.name = name
 
@@ -38,7 +38,7 @@
 	usr << browse("You have been modified!")
 
 
-/Form/Newbie/HtmlLayout()
+/datum/dmui_form/Newbie/HtmlLayout()
 	return {"
 
 Your name: [name] <br>
