@@ -17,6 +17,9 @@
 
 // BEGIN_INCLUDE
 #include "htmllib.dm"
+#include "interface.dmf"
+#include "demo\kitchen.dm"
+#include "demo\Newbie.dm"
 #include "src\form_client.dm"
 #include "src\form_core.dm"
 #include "src\form_procs.dm"

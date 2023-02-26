@@ -18,9 +18,6 @@
 	/// User may submit this form multiple times.
 	var/tmp/form_reusable
 
-	/// True if form submission is handled by client.CGI (which creates a new instance of the form to process the results).
-	var/tmp/form_cgi_mode
-
 	/// Web browser submission method (must be "get" in BYOND mode).
 	var/tmp/form_method = "get"
 

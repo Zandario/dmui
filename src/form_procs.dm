@@ -341,11 +341,7 @@
 
 		html = "<form method=[method][encoding] action='[GetSubmitUrl(form_sub_path)]' [form_extra]>\n"
 
-		if(form_cgi_mode)
-			html += "<input type=hidden name=type value=[type]>\n"
-
-		else
-			html += "<input type=hidden name=src value='[html_encode("\ref[src]")]'>\n"
+		html += "<input type=hidden name=src value='[html_encode("\ref[src]")]'>\n"
 
 		if(submit_only)
 			//? Prevent solitary submit button from submitting an empty set of params (so form will be processed).
@@ -365,17 +361,7 @@
 	if(form_url)
 		return form_url
 
-	var/url
-
-	if(form_cgi_mode)
-		url = world.url
-
-		if(!url || findtext(url,"byond://") == 1)
-			//? Presumably we are in BYOND mode.
-			url = "byond://"
-
-	else
-		url = "byond://"
+	var/url = "byond://"
 
 	if(sub_path)
 		url = "[url]/[sub_path]"
@@ -420,14 +406,10 @@
 
 
 
-	if(form_cgi_mode)
-		plist["type"] = type
+	plist["src"] = src
 
-	else
-		plist["src"] = src
-
-		if(!passive)
-			StartWaiting()
+	if(!passive)
+		StartWaiting()
 
 
 
@@ -436,11 +418,7 @@
 
 
 /Form/proc/GetButtonScript(name, Form/parent_form)
-
-	if(form_is_sub && form_cgi_mode)
-		return parent_form.GetButtonScript(name)
-	else
-		return {"document.location.href="[GetSelfUrl(form_var_prefix + name,form_usr,passive=1)]""}
+	return {"document.location.href="[GetSelfUrl(form_var_prefix + name,form_usr,passive=1)]""}
 
 
 
@@ -509,7 +487,7 @@
 
 
 /**
- * Call this to submit a filled out form (CGI library uses this).
+ * Call this to submit a filled out form.
  *
  * This is primarily used by CGI scripts on the web
  * optional params list contains the pre-parsed contents of href
@@ -530,11 +508,7 @@
 
 	form_usr = usr
 
-	if(form_cgi_mode)
-		form_waiting = 1   //allow garbage collector to delete us, because CGI creates a new instance of form for processing
-
-	else
-		form_waiting = src //avoid garbage collector
+	form_waiting = src //avoid garbage collector
 
 	form_wait_count += 1
 
