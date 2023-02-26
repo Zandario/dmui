@@ -54,8 +54,9 @@
 	/// The ID of the skin window used.
 	var/tmp/window_key
 
-	/// browse() parameters to use for forms in DreamSeeker.
-	var/tmp/form_window
+	var/tmp/can_resize   = TRUE
+	var/tmp/can_scroll   = TRUE
+	var/tmp/can_minimize = FALSE
 
 	/// User may submit this form multiple times.
 	var/tmp/form_reusable = FALSE
@@ -66,6 +67,8 @@
 	/// Extra html code to insert into the form tag.
 	var/tmp/form_extra
 
+	var/tmp/form_width  = 512
+	var/tmp/form_height = 512
 
 	//# internal stuff (no peeking)
 
@@ -221,7 +224,7 @@
 				if(BUTTON) //only happens when button is clicked--not when form is submitted
 					StartWaiting()
 
-					call(src,fv.clickproc)()
+					call(src, fv.clickproc)()
 
 					StopWaiting()
 
@@ -257,7 +260,7 @@
 								vars[fv.name] = pval
 
 							else
-								vars[fv.name] = call(src,fv.clickproc)()
+								vars[fv.name] = call(src, fv.clickproc)()
 
 						StopWaiting()
 

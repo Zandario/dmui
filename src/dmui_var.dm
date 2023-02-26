@@ -183,7 +183,7 @@
 
 		if(our_form.BUTTON)
 			if(click_script)
-				html = "<input type=button value='[label || html_value || name]' onClick='[click_script]' [extra]>"
+				html = "<input id='button' type=button value='[label || html_value || name]' onClick='[click_script]' [extra]>"
 
 			else
 				world.log << "htmllib.dm: ([name]) buttons do not work in web mode"

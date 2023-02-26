@@ -190,12 +190,12 @@
 			if(fv.interface == AUTO || fv.interface == BUTTON || fv.interface == PROMPT)
 				var/clickproc = "[fv.name]Click"
 
-				if(hascall(src,clickproc))
+				if(hascall(src, clickproc))
 					fv.clickproc = clickproc
 				else
 					clickproc = Capitalize(clickproc)
 
-					if(hascall(src,clickproc))
+					if(hascall(src, clickproc))
 						fv.clickproc = clickproc
 
 
@@ -424,7 +424,7 @@
 
 /datum/dmui_form/proc/DisplayForm(mob/user)
 	PreDisplayForm(user)
-	user << browse(GetHtmlDoc(), form_window)
+	user << browse(GetHtmlDoc(), "window=[window_key];size=[form_width]x[form_height];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];")
 
 
 /**

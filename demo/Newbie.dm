@@ -9,7 +9,6 @@
 
 
 /datum/dmui_form/Newbie
-	form_window = "window=Newbie"
 
 	var/name
 
@@ -49,6 +48,7 @@ Your gender:      <br>
 [gender_2] female <br>
 [gender_3] other  <br>
 Your race: [race] <br>
+
 [submit]
 
 "}

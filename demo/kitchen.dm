@@ -5,7 +5,6 @@
 	form.DisplayForm(src) //? Send usr the form.
 
 /datum/dmui_form/Kitchen
-	form_window = "window=KitchenForm"
 
 	var/text
 	var/text_interface = TEXT

@@ -13,6 +13,7 @@
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
+#include "demo\themed.dm"
 #include "src\dmui_client.dm"
 #include "src\dmui_form.dm"
 #include "src\dmui_form_procs.dm"

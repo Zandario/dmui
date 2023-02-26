@@ -338,10 +338,6 @@ The `form_default_size` variable sets the default input field display size. If y
 
 The `form_sub_path` variable contains extra path information in the form's URL, which is tagged on after the `.dmb` name. Be careful if you use this, because the extra path information is included in the default base href when you output an html page in CGI mode.
 
-#### Form Window
-
-The `form_window` variable contains [browse()](http://www.byond.com/docs/ref/info.html#/proc/browse) window parameters. This can be used to make the form popup in a new window, rather than the default behavior, which is to appear in the browser panel on the main Dream Seeker window. This variable has no effect in CGI mode.
-
 #### Extra Form Parameters
 
 The contents of the `form_extra` variable are inserted into the form tag in the html output. You could use this to insert extra code, such as Java Script that is not supported directly by the other form variables.
