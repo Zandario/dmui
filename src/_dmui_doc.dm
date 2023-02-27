@@ -37,6 +37,6 @@
  * To define how the form looks, you override get_html_layout().
  *
  *
- * See `dmui.md` for the details.
+ * See `README.md` for the details.
  *
  */
