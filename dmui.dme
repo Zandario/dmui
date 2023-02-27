@@ -14,8 +14,6 @@
 
 // BEGIN_INCLUDE
 #include "__compile_options.dm"
-#include "demo\themed.dm"
-#include "src\dmui_client.dm"
 #include "src\dmui_form.dm"
 #include "src\dmui_form_procs.dm"
 #include "src\dmui_var.dm"
@@ -23,7 +21,8 @@
 
 // BEGIN_DEMO
 #ifdef __MAIN__
-#include "demo\kitchen.dm"
-#include "demo\Newbie.dm"
+#include "demo\disposal_bin.dm"
+#include "demo\newbie.dm"
+#include "demo\themed.dm"
 #endif
  // END_DEMO
