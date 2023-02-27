@@ -22,7 +22,7 @@
 // BEGIN_DEMO
 #ifdef __MAIN__
 #include "demo\disposal_bin.dm"
+#include "demo\kitchen.dm"
 #include "demo\newbie.dm"
-#include "demo\themed.dm"
 #endif
  // END_DEMO
