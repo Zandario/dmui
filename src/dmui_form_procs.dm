@@ -432,9 +432,10 @@
 	var/compiled_args = "window=[window_key];size=[form_width]x[form_height];titlebar=[!fancy_window];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];"
 	user << browse(get_html_body(), compiled_args)
 	user << output(compiled_args)
-	// TODO: Verbose compile args for debugging.
-	// user << output(html_encode("[get_html_body()]"))
 
+	#ifdef DMUI_VERBOSE_LOGGING
+	user << output(html_encode("[get_html_body()]"))
+	#endif
 
 
 /**
