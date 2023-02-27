@@ -54,9 +54,10 @@
 	/// The ID of the skin window used.
 	var/tmp/window_key
 
+	var/tmp/fancy_window = FALSE
 	var/tmp/can_resize   = TRUE
 	var/tmp/can_scroll   = TRUE
-	var/tmp/can_minimize = FALSE
+	var/tmp/can_minimize = TRUE
 
 	/// User may submit this form multiple times.
 	var/tmp/form_reusable = FALSE

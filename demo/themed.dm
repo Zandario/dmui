@@ -11,6 +11,7 @@
 	form_height = 190
 	can_scroll  = FALSE
 	can_resize  = FALSE
+	// fancy_window = TRUE
 
 	var/pressure
 	var/full_pressure
@@ -35,9 +36,6 @@
 	full_pressure = pressure >= 100
 	return ..()
 
-/datum/dmui_form/Themed/ProcessForm()
-
-	usr << browse("You have been modified!")
 
 /datum/dmui_form/Themed/GetHtmlHead()
 	var/html_head = ""
@@ -52,10 +50,11 @@
 	var/body = GetHtml()
 
 	return {"\
-<!doctype html>
+<!DOCTYPE html>
 <html>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta http-equiv='content-language' content='en-us' />
 	<head>
 		<title>[form_title]</title>
 		<link rel="stylesheet" type="text/css" href="sui-nano-common.css">

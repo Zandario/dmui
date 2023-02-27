@@ -185,18 +185,12 @@
 			if(click_script)
 				html = "<input id='button' type=button value='[label || html_value || name]' onClick='[click_script]' [extra]>"
 
-			else
-				world.log << "htmllib.dm: ([name]) buttons do not work in web mode"
-
 		if(our_form.PROMPT)
 			if(click_script)
 				html = "<input type=button value='...' onClick='[click_script]' [extra]>"
 
 			else if(input_type == our_form.ICON_ITYPE || input_type == our_form.SOUND_ITYPE || input_type == our_form.FILE_ITYPE)
 				html = "<input name=[html_name] type=file [extra]>"
-
-			else
-				world.log << "htmllib.dm: ([name]) buttons do not work in web mode"
 
 
 		if(our_form.HIDDEN)

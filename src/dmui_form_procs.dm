@@ -424,7 +424,11 @@
 
 /datum/dmui_form/proc/DisplayForm(mob/user)
 	PreDisplayForm(user)
-	user << browse(GetHtmlDoc(), "window=[window_key];size=[form_width]x[form_height];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];")
+	var/compiled_args = "window=[window_key];size=[form_width]x[form_height];titlebar=[!fancy_window];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];"
+	user << browse(GetHtmlDoc(), compiled_args)
+	user << output(compiled_args)
+	// user << output(html_encode("[GetHtmlDoc()]"))
+
 
 
 /**
