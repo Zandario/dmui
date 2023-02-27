@@ -9,11 +9,9 @@
 /// Examines user-defined variables and creates list of form interface elements.
 /datum/dmui_form/proc/generate_elements(parent_form)
 
-	var/V
-
 	var/myvars[] = vars.Copy() // vars list is slow, so save a copy of it
 
-	var/control_tags = list(
+	var/list/control_tags = list(
 		"values"    = 1,
 		"validate"  = 1,
 		"maxlen"    = 1,
@@ -25,12 +23,12 @@
 		"interface" = 1,
 	)
 
-	for(V in myvars)
-		var/control = findtextEx(V,"_")
+	for(var/variable in myvars)
+		var/control = findtextEx(variable, "_")
 		var/next_control
 
 		while(control)
-			next_control = findtextEx(V, "_", control+1)
+			next_control = findtextEx(variable, "_", control+1)
 
 			if(!next_control)
 				break
@@ -38,7 +36,7 @@
 			control = next_control
 
 		if(control)
-			control = copytext(V,control+1)
+			control = copytext(variable, control+1)
 
 			if(control in control_tags)
 				continue
@@ -46,15 +44,15 @@
 			if("[text2num(control)]" == control)
 				continue
 
-		if(issaved(vars[V]) && V != "tag")
+		if(issaved(vars[variable]) && variable != "tag")
 			var/datum/dmui_var/fv = new()
 
-			fv.name = V
+			fv.name = variable
 
-			if(istext(vars[V]))
+			if(istext(vars[variable]))
 				fv.input_type = TEXT_ITYPE
 
-			else if(isnum(vars[V]))
+			else if(isnum(vars[variable]))
 				fv.input_type = NUM_ITYPE
 
 
@@ -63,57 +61,57 @@
 			fv.maxlength = form_default_maxlen
 
 
-			if(V == "submit")
+			if(variable == "submit")
 				fv.interface = SUBMIT
 
-			else if(V == "reset")
+			else if(variable == "reset")
 				fv.interface = RESET
 
 
 
-			var/var_values = "[V]_values"
+			var/var_values = "[variable]_values"
 			if(var_values in myvars)
 				fv.values = vars[var_values]
 
 
 
-			var/var_validate = "[V]_validate"
+			var/var_validate = "[variable]_validate"
 			if(var_validate in myvars)
 				fv.validate = vars[var_validate]
 
 
 
-			var/var_maxlen = "[V]_maxlen"
+			var/var_maxlen = "[variable]_maxlen"
 			if(var_maxlen in myvars)
 				fv.maxlength = vars[var_maxlen]
 
 
 
-			var/var_size = "[V]_size"
+			var/var_size = "[variable]_size"
 			if(var_size in myvars)
 				fv.size = vars[var_size]
 
 
 
-			var/var_wrap = "[V]_wrap"
+			var/var_wrap = "[variable]_wrap"
 			if(var_wrap in myvars)
 				fv.wrap = vars[var_wrap]
 
 
 
-			var/var_extra = "[V]_extra"
+			var/var_extra = "[variable]_extra"
 			if(var_extra in myvars)
 				fv.extra = vars[var_extra]
 
 
 
-			var/var_label = "[V]_label"
+			var/var_label = "[variable]_label"
 			if(var_label in myvars)
 				fv.label = vars[var_label]
 
 
 
-			var/var_hidden = "[V]_hidden"
+			var/var_hidden = "[variable]_hidden"
 			if(var_hidden in myvars)
 				fv.hidden = vars[var_hidden]
 
@@ -122,7 +120,7 @@
 			var/n
 
 			for(n=1, , n++)
-				var/var_n = "[V]_[n]"
+				var/var_n = "[variable]_[n]"
 
 				if(var_n in myvars)
 					fv.interface = RADIO
@@ -165,7 +163,7 @@
 
 
 
-			var/var_interface = "[V]_interface"
+			var/var_interface = "[variable]_interface"
 
 			if(var_interface in myvars)
 				fv.interface = vars[var_interface]
@@ -228,15 +226,13 @@
 
 /datum/dmui_form/proc/set_var_prefix(var_prefix)
 
-	var/datum/dmui_var/fv
-
 	form_var_prefix = var_prefix
 
-	for(fv in form_vars)
-		if(fv.interface == SUB_FORM)
-			var/datum/dmui_form/sf = vars[fv.name]
+	for(var/datum/dmui_var/our_var as anything in form_vars) // Ah yes, vars in vars
+		if(our_var.interface == SUB_FORM)
+			var/datum/dmui_form/sub_form = vars[our_var.name]
 
-			sf.set_var_prefix("[form_var_prefix][fv.name]_")
+			sub_form.set_var_prefix("[form_var_prefix][our_var.name]_")
 
 
 /// Sets form_hidden and calls get_html().
@@ -256,7 +252,7 @@
 	var/datum/dmui_var/fv
 	var/submit_only = TRUE
 
-	form_is_sub = (parent_form && parent_form != src) ? TRUE : FALSE
+	form_is_sub = (parent_form && parent_form != src)
 
 	//? Generate html code for each input variable
 	for(fv in form_vars)
@@ -341,7 +337,7 @@
 /// Return URL containing all form variables or specified parameters.
 /datum/dmui_form/proc/get_self_url(params, mob/user, passive)
 
-	var/datum/dmui_var/fv
+
 	var/plist[0]
 
 
@@ -356,12 +352,12 @@
 		else
 			plist = params
 	else
-		for(fv in form_vars)
-			switch(fv.interface)
+		for(var/datum/dmui_var/our_var as anything in form_vars)
+			switch(our_var.interface)
 				if(RADIO_OPTION,BUTTON,PROMPT,SUBMIT,RESET)
 					continue
 
-			plist[fv.name] = vars[fv.name]
+			plist[our_var.name] = vars[our_var.name]
 
 	plist["src"] = src
 
@@ -410,6 +406,9 @@
 		form_waiting = null
 		form_wait_count = 0
 
+	//? Set the user for this form.
+	src.user = user || usr
+
 	if(!user.client)
 		//? No sense in creating form for NPC.
 		return
@@ -418,11 +417,11 @@
 
 	Initialize()
 
-	for(var/datum/dmui_var/fv in form_vars)
-		if(fv.interface == SUB_FORM)
-			var/datum/dmui_form/sf = vars[fv.name]
-			//TODO: could call sf.setup_form() here but code currently assumes lack of start_waiting() call on sub-forms
-			sf.Initialize()
+	for(var/datum/dmui_var/our_var as anything in form_vars)
+		if(our_var.interface == SUB_FORM)
+			var/datum/dmui_form/sub_form = vars[our_var.name]
+			//TODO: could call sub_form.setup_form() here but code currently assumes lack of start_waiting() call on sub-forms
+			sub_form.Initialize()
 
 	start_waiting()
 
@@ -452,7 +451,9 @@
 
 
 /datum/dmui_form/proc/start_waiting()
-	user = usr
+	if(isnull(user))
+		world.log << "Error: start_waiting() called without a user."
+		return
 	form_waiting = src //avoid garbage collector
 	form_wait_count += 1
 
@@ -497,15 +498,15 @@
 		if(fv.interface != RADIO_OPTION && fv.interface != BUTTON && fv.interface != HIDDEN && fv.interface != HIDDEN_LIST && !fv.hidden)
 			html += fv.label || capitalize(fv.name)
 
-		var/value = vars[fv.name]
+		var/values = vars[fv.name]
 
-		if(istype(value,/list))
-			for(var/V in value)
+		if(islist(values))
+			for(var/member in values)
 				html += "<br>\n"
-				html += value[V]
-				html += V
+				html += values[member]
+				html += member
 		else
-			html += value
+			html += values
 
 		if(fv.interface == RADIO_OPTION)
 			html += fv.label || fv.html_value
