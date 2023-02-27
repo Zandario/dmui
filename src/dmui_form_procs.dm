@@ -1,13 +1,13 @@
-/// Called in DisplayForm().
+/// Called in display_form().
 /datum/dmui_form/proc/Initialize()
 	return
 
 /// Called when the form is complete.
-/datum/dmui_form/proc/ProcessForm()
+/datum/dmui_form/proc/process_form()
 	return
 
 /// Examines user-defined variables and creates list of form interface elements.
-/datum/dmui_form/proc/MakeFormVarList(parent_form)
+/datum/dmui_form/proc/generate_elements(parent_form)
 
 	var/V
 
@@ -178,7 +178,7 @@
 
 				if(istype(sf))
 					//TODO: make sure prefix plus sub-form variables do not conflict with any others on this form
-					sf.SetVarPrefix("[form_var_prefix][fv.name]_")
+					sf.set_var_prefix("[form_var_prefix][fv.name]_")
 
 					fv.interface = SUB_FORM
 
@@ -193,7 +193,7 @@
 				if(hascall(src, clickproc))
 					fv.clickproc = clickproc
 				else
-					clickproc = Capitalize(clickproc)
+					clickproc = capitalize(clickproc)
 
 					if(hascall(src, clickproc))
 						fv.clickproc = clickproc
@@ -226,7 +226,7 @@
 
 
 
-/datum/dmui_form/proc/SetVarPrefix(var_prefix)
+/datum/dmui_form/proc/set_var_prefix(var_prefix)
 
 	var/datum/dmui_var/fv
 
@@ -236,20 +236,20 @@
 		if(fv.interface == SUB_FORM)
 			var/datum/dmui_form/sf = vars[fv.name]
 
-			sf.SetVarPrefix("[form_var_prefix][fv.name]_")
+			sf.set_var_prefix("[form_var_prefix][fv.name]_")
 
 
-/// Sets form_hidden and calls GetHtml().
-/datum/dmui_form/proc/GetHiddenHtml(parent_form)
+/// Sets form_hidden and calls get_html().
+/datum/dmui_form/proc/get_hidden_html(parent_form)
 	form_hidden++
-	var/target_form = GetHtml(parent_form)
+	var/target_form = get_html(parent_form)
 	form_hidden--
 
 	return target_form
 
 
-/// Set up variables and call user-defined HtmlLayout().
-/datum/dmui_form/proc/GetHtml(datum/dmui_form/parent_form)
+/// Set up variables and call user-defined get_html_layout().
+/datum/dmui_form/proc/get_html(datum/dmui_form/parent_form)
 
 	var/html
 	var/body
@@ -268,7 +268,7 @@
 
 			if(BUTTON,PROMPT)
 				if(form_byond_mode)
-					fv.click_script = GetButtonScript(fv.name, parent_form)
+					fv.click_script = get_button_script(fv.name, parent_form)
 
 				else //assume this is an upload field
 					form_method = "post"
@@ -283,11 +283,11 @@
 
 		fv.html_value = html_encode(fv.value)
 
-		vars[fv.name] = fv.MakeInputTag(src, form_var_prefix)
+		vars[fv.name] = fv.generate_input_tag(src, form_var_prefix)
 
 	if(!form_hidden)
 		//? User generates html by inserting form variables.
-		body = HtmlLayout()
+		body = get_html_layout()
 
 	//? Restore variables and tag on hidden ones
 	for(fv in form_vars)
@@ -314,7 +314,7 @@
 			//? Post does not work in Dream Seeker.
 			method = "get"
 
-		html = "<form method=[method][encoding] action='[GetSubmitUrl(form_sub_path)]' [form_extra]>\n"
+		html = "<form method=[method][encoding] action='[get_submit_url(form_sub_path)]' [form_extra]>\n"
 		html += "<input type=hidden name=src value='[html_encode("\ref[src]")]'>\n"
 
 		if(submit_only)
@@ -327,7 +327,7 @@
 	return html
 
 
-/datum/dmui_form/proc/GetSubmitUrl(sub_path)
+/datum/dmui_form/proc/get_submit_url(sub_path)
 	if(form_url)
 		return form_url
 
@@ -339,7 +339,7 @@
 
 
 /// Return URL containing all form variables or specified parameters.
-/datum/dmui_form/proc/GetSelfUrl(params, mob/user, passive)
+/datum/dmui_form/proc/get_self_url(params, mob/user, passive)
 
 	var/datum/dmui_var/fv
 	var/plist[0]
@@ -366,24 +366,24 @@
 	plist["src"] = src
 
 	if(!passive)
-		StartWaiting()
+		start_waiting()
 
-	return html_encode("[GetSubmitUrl(form_sub_path)]?[list2params(plist)]")
-
-
-/datum/dmui_form/proc/GetButtonScript(name, datum/dmui_form/parent_form)
-	return {"document.location.href="[GetSelfUrl(form_var_prefix + name, user, passive=TRUE)]""}
+	return html_encode("[get_submit_url(form_sub_path)]?[list2params(plist)]")
 
 
-/datum/dmui_form/proc/GetHtmlHead()
+/datum/dmui_form/proc/get_button_script(name, datum/dmui_form/parent_form)
+	return {"document.location.href="[get_self_url(form_var_prefix + name, user, passive=TRUE)]""}
+
+
+/datum/dmui_form/proc/get_html_header()
 	if(form_title)
 		return "<title>[form_title]</title>"
 
 
 /// Returns form as a stand-alone document.
-/datum/dmui_form/proc/GetHtmlDoc()
-	var/head = GetHtmlHead()
-	var/body = GetHtml()
+/datum/dmui_form/proc/get_html_body()
+	var/head = get_html_header()
+	var/body = get_html()
 
 	return \
 {"
@@ -404,9 +404,9 @@
  * Call this to send form to user.
  * Do everything except display the form.
  */
-/datum/dmui_form/proc/PreDisplayForm(mob/user)
+/datum/dmui_form/proc/setup_form(mob/user)
 	if(form_waiting)
-		world.log << "Error: DisplayForm([user]) called before previous submission finished."
+		world.log << "Error: display_form([user]) called before previous submission finished."
 		form_waiting = null
 		form_wait_count = 0
 
@@ -421,18 +421,19 @@
 	for(var/datum/dmui_var/fv in form_vars)
 		if(fv.interface == SUB_FORM)
 			var/datum/dmui_form/sf = vars[fv.name]
-			//TODO: could call sf.PreDisplayForm() here but code currently assumes lack of StartWaiting() call on sub-forms
+			//TODO: could call sf.setup_form() here but code currently assumes lack of start_waiting() call on sub-forms
 			sf.Initialize()
 
-	StartWaiting()
+	start_waiting()
 
 
-/datum/dmui_form/proc/DisplayForm(mob/user)
-	PreDisplayForm(user)
+/datum/dmui_form/proc/display_form(mob/user)
+	setup_form(user)
 	var/compiled_args = "window=[window_key];size=[form_width]x[form_height];titlebar=[!fancy_window];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];"
-	user << browse(GetHtmlDoc(), compiled_args)
+	user << browse(get_html_body(), compiled_args)
 	user << output(compiled_args)
-	// user << output(html_encode("[GetHtmlDoc()]"))
+	// TODO: Verbose compile args for debugging.
+	// user << output(html_encode("[get_html_body()]"))
 
 
 
@@ -442,20 +443,20 @@
  * This is primarily used by CGI scripts on the web
  * optional params list contains the pre-parsed contents of href
  */
-/datum/dmui_form/proc/SubmitForm(href, mob/user, params)
+/datum/dmui_form/proc/submit_form(href, mob/user, params)
 	if(!form_wait_count)
-		StartWaiting()
+		start_waiting()
 
 	return Topic(href, params)
 
 
-/datum/dmui_form/proc/StartWaiting()
+/datum/dmui_form/proc/start_waiting()
 	user = usr
 	form_waiting = src //avoid garbage collector
 	form_wait_count += 1
 
 
-/datum/dmui_form/proc/StopWaiting()
+/datum/dmui_form/proc/stop_waiting()
 	if(form_wait_count)
 		form_wait_count -= 1
 
@@ -467,21 +468,21 @@
 			user = null
 			form_waiting = null
 
-		ProcessForm()
+		process_form()
 
 
-/datum/dmui_form/proc/Capitalize(txt)
+/datum/dmui_form/proc/capitalize(txt)
 	return uppertext(copytext(txt, 1, 2)) + copytext(txt, 2)
 
 
 /**
  * Returns html text.
  *
- * The default HtmlLayout() is almost always overridden by the user.
+ * The default get_html_layout() is almost always overridden by the user.
  * It makes a very simple (and probably ugly) form interface for the given variables.
  * It does make rapid form development a breeze, though.
  */
-/datum/dmui_form/proc/HtmlLayout()
+/datum/dmui_form/proc/get_html_layout()
 	var/datum/dmui_var/fv
 	var/html
 
@@ -493,7 +494,7 @@
 			continue
 
 		if(fv.interface != RADIO_OPTION && fv.interface != BUTTON && fv.interface != HIDDEN && fv.interface != HIDDEN_LIST && !fv.hidden)
-			html += fv.label || Capitalize(fv.name)
+			html += fv.label || capitalize(fv.name)
 
 		var/value = vars[fv.name]
 

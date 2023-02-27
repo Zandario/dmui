@@ -1,41 +1,4 @@
-/**
- *
- * HTML Library
- *
- * Version: 2.0   (2023-02-26) // Restructure by Zandario
- *
- * Version: 1.9   (2023-02-26) // Modern Formatting by Zandario
- *
- * Version: 1.8   (2003-01-29)
- *
- * Version: 1.7   (2002-03-12)
- *
- * Version: 1.6   (2002-02-05)
- *
- * Version: 1.5   (2001-11-02)
- *
- * Version: 1.4   (2001-03-24)
- *
- * Version: 1.3   (2001-01-30)
- *
- * Version: 1.2   (2001-01-18)
- *
- * Version: 1.1   (2000-10-11)
- *
- * Version: 1.0   (2000-09-16)
- *
- *
- *
- * To create a new type of form, you derive one from the base Form object.
- *
- * The variables you define are automatically written to and read from the form.
- *
- * To define how the form looks, you override HtmlLayout().
- *
- *
- * See `htmllib.html` for the details.
- *
- */
+
 /datum/dmui_form
 
 	var/submit = "Submit"
@@ -101,7 +64,7 @@
 	/// True if this is a sub-form.
 	var/tmp/form_is_sub = FALSE
 
-	/// Hides the entire form (used by GetHiddenHtml()).
+	/// Hides the entire form (used by get_hidden_html()).
 	var/tmp/form_hidden
 
 
@@ -149,7 +112,7 @@
 
 
 /datum/dmui_form/New()
-	MakeFormVarList()
+	generate_elements()
 	return ..()
 
 
@@ -223,17 +186,17 @@
 					goto wrapup
 
 				if(BUTTON) //only happens when button is clicked--not when form is submitted
-					StartWaiting()
+					start_waiting()
 
 					call(src, fv.clickproc)()
 
-					StopWaiting()
+					stop_waiting()
 
 					return BUTTON_CLICK
 
 				if(PROMPT)
 					if(form_byond_mode)
-						StartWaiting()
+						start_waiting()
 
 						switch(fv.input_type)
 							if(ICON_ITYPE)
@@ -263,7 +226,7 @@
 							else
 								vars[fv.name] = call(src, fv.clickproc)()
 
-						StopWaiting()
+						stop_waiting()
 
 						return BUTTON_CLICK
 
@@ -291,13 +254,13 @@
 		if(fv.interface == SUB_FORM)
 			var/datum/dmui_form/sf = vars[fv.name]
 
-			var/ret = sf.SubmitForm(href,usr,params)
+			var/ret = sf.submit_form(href,usr,params)
 
 			if(ret == BUTTON_CLICK)
 				return ret
 
 	wrapup:
 
-	StopWaiting()
+	stop_waiting()
 
 	return SUBMIT_CLICK

@@ -19,7 +19,7 @@
 	var/datum/dmui_form/our_form
 
 /// Generate the html for an input variable.
-/datum/dmui_var/proc/MakeInputTag(datum/dmui_form/form, var_prefix)
+/datum/dmui_var/proc/generate_input_tag(datum/dmui_form/form, var_prefix)
 	var/html
 	var/html_name = var_prefix + name
 
@@ -61,7 +61,7 @@
 
 
 
-	//some hidden elements are handled specially
+	//? Some hidden elements are handled specially.
 
 	if(hidden || form.form_hidden)
 		switch(interface)
@@ -112,7 +112,6 @@
 
 		if(our_form.TEXTAREA)
 			var/row_col
-
 			var/wrap_html
 
 			if(size)
@@ -120,7 +119,6 @@
 
 				if(!xpos)
 					row_col = " rows='[size]'"
-
 				else
 					row_col = " cols='[copytext(size,1,xpos)]' rows='[copytext(size,xpos+1)]'"
 
@@ -201,10 +199,10 @@
 			var/datum/dmui_form/sf = value
 
 			if(hidden || form.form_hidden)
-				html = sf.GetHiddenHtml(form)
+				html = sf.get_hidden_html(form)
 
 			else
-				html = sf.GetHtml(form)
+				html = sf.get_html(form)
 
 
 		if(our_form.HIDDEN_LIST)

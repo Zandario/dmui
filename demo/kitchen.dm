@@ -2,7 +2,7 @@
 
 	var/datum/dmui_form/Kitchen/form = new()
 
-	form.DisplayForm(src) //? Send usr the form.
+	form.display_form(src) //? Send usr the form.
 
 /datum/dmui_form/Kitchen
 

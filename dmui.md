@@ -37,11 +37,11 @@ Programs that generate HTML (or any other code for that matter) often appear rat
   - [Default Input Field Size](#default-input-field-size)
   - [Sub Path](#sub-path)
   - [Extra Form Parameters](#extra-form-parameters)
-  - [`DisplayForm()`](#displayform)
-  - [`HtmlLayout()`](#htmllayout)
+  - [`display_form()`](#display_form)
+  - [`get_html_layout()`](#get_html_layout)
   - [`Initialize()`](#initialize)
-  - [`ProcessForm()`](#processform)
-  - [`GetSelfUrl()`](#getselfurl)
+  - [`process_form()`](#process_form)
+  - [`get_self_url()`](#get_self_url)
 
 
 ## Tutorial
@@ -58,12 +58,12 @@ That defines a form type `/datum/dmui_form/Newbie` with three fields: name, gend
 
 ### Displaying a Form
 
-You can submit this form to a player by calling `DisplayForm()`.
+You can submit this form to a player by calling `display_form()`.
 
 ```dm
 /mob/verb/myinfo()
 	var/datum/dmui_form/Newbie/new_form = new()
-	new_form.DisplayForm() //? Send our user the form.
+	new_form.display_form() //? Send our user the form.
 ```
 
 If you try that, you should see the form pop up in the browser window when you use the `myinfo` verb.
@@ -72,14 +72,14 @@ There are several things to note at this point. One is that the form doesn't do 
 
 ### Processing a Form
 
-When the form is complete, its `ProcessForm()` procedure is called. You can define it to do whatever you want.
+When the form is complete, its `process_form()` procedure is called. You can define it to do whatever you want.
 
 ```dm
 // Newbie.dm
 
 /mob/var/race //human, ogre, or jellyfish
 
-/datum/dmui_form/Newbie/ProcessForm()
+/datum/dmui_form/Newbie/process_form()
 	usr.name   = name
 	usr.gender = gender
 	usr.race   = race
@@ -90,7 +90,7 @@ It is a good idea to output something to the browser acknowledging receipt of th
 
 ### Initializing a Form
 
-In the same way that the form variables were accessed in `ProcessForm()`, they can be initialized in `Initialize()`. This is automaitcally called by `DisplayForm` before generating the form's HTML.
+In the same way that the form variables were accessed in `process_form()`, they can be initialized in `Initialize()`. This is automaitcally called by `display_form` before generating the form's HTML.
 
 ```dm
 // Newbie.dm
@@ -128,12 +128,12 @@ There are other types of interface elements. You can learn about those in the re
 
 ### Form Layout
 
-The layout of your form has so far been automatically generated. You can design the html yourself by overriding the `HtmlLayout()` procedure.
+The layout of your form has so far been automatically generated. You can design the html yourself by overriding the `get_html_layout()` procedure.
 
 ```dm
 // Newbie.dm
 
-/datum/dmui_form/Newbie/HtmlLayout()
+/datum/dmui_form/Newbie/get_html_layout()
 	return {"
 Your name: [name] <br>
 Your gender:      <br>
@@ -145,7 +145,7 @@ Your race: [race] <br>
 "}
 ```
 
-Wherever you want an interface element to appear, you simply embed the associated variable. (Before `HtmlLayout()` is called, each of the variables is automatically assigned to the html code that produces the desired interface element.) The special submit variable produces a button that submits the form. There is also a reset variable so the user can undo changes and start over.
+Wherever you want an interface element to appear, you simply embed the associated variable. (Before `get_html_layout()` is called, each of the variables is automatically assigned to the html code that produces the desired interface element.) The special submit variable produces a button that submits the form. There is also a reset variable so the user can undo changes and start over.
 
 Since this is an HTML document, you have to use wherever you want a line break. For convenience, we did use a text document (curly braces around the double quotes), so newlines could be embedded directly in the text, but the browser treates those just like spaces. You can use any other HTML tricks you want in order to control the appearance.
 
@@ -200,7 +200,7 @@ The user may turn this interface element on or off. When it is off, the variable
 
 ##### CHECKLIST
 
-This produces a list of check boxes, each with a different corresponding value. The functionality is similar to MULTI_SELECT, but you have control over how each item in the list is displayed. This interface behaves a little differently from the others during HtmlLayout(). The value of the variable is a list of the values you assigned to the `_values` control variable and each of these has an associated html value. You access the html by indexing the interface variable with each of the possible values. When the form is processed, the interface variable will contain a list of the values checked by the user.
+This produces a list of check boxes, each with a different corresponding value. The functionality is similar to MULTI_SELECT, but you have control over how each item in the list is displayed. This interface behaves a little differently from the others during get_html_layout(). The value of the variable is a list of the values you assigned to the `_values` control variable and each of these has an associated html value. You access the html by indexing the interface variable with each of the possible values. When the form is processed, the interface variable will contain a list of the values checked by the user.
 
 ##### RADIO
 
@@ -212,11 +212,11 @@ This is like a CHECKLIST except the user may only choose one item from the list.
 
 ##### HIDDEN
 
-This allows you to hide an interface variable from the user. You might want to do that when the form is one of a sequence of dialogues and you need to retain information from previous steps as you move along. Like any other interface type, you have to embed the variable in the html if you override HtmlLayout(). To have the variable automatically embedded, use the `form_hidden` control variable instead.
+This allows you to hide an interface variable from the user. You might want to do that when the form is one of a sequence of dialogues and you need to retain information from previous steps as you move along. Like any other interface type, you have to embed the variable in the html if you override get_html_layout(). To have the variable automatically embedded, use the `form_hidden` control variable instead.
 
 ##### BUTTON
 
-This generates a button on the form. When the user clicks it, your procedure (called varnameClick()) is called. The value of this variable (when DisplayForm() is called) is displayed on the button face. If the value is null, the name of the variable is used instead.
+This generates a button on the form. When the user clicks it, your procedure (called varnameClick()) is called. The value of this variable (when display_form() is called) is displayed on the button face. If the value is null, the name of the variable is used instead.
 
 ##### PROMPT
 
@@ -264,7 +264,7 @@ The `_label` control variable is used by the default form layout generator to la
 
 #### Hidden Variable
 
-The `_hidden` control variable causes the variable to be automatically stored in the form but with no visible interface. (Assign _hidden to a true value.) This is a similar effect to the [HIDDEN](#hidden) interface type, except HIDDEN variables are not automatically embedded in the form if you override HtmlLayout().
+The `_hidden` control variable causes the variable to be automatically stored in the form but with no visible interface. (Assign _hidden to a true value.) This is a similar effect to the [HIDDEN](#hidden) interface type, except HIDDEN variables are not automatically embedded in the form if you override get_html_layout().
 
 #### Wrapping
 
@@ -313,7 +313,7 @@ In addition to interface variables and their associated control variables, you m
 
 #### Reusable Forms
 
-One such pre-defined variable is the `form_reusable` variable. It defaults to a false value, indicating that you only intend the user to submit the form once after each call to `DisplayForm()`.
+One such pre-defined variable is the `form_reusable` variable. It defaults to a false value, indicating that you only intend the user to submit the form once after each call to `display_form()`.
 
 If you want the user to be able to repeatedly submit the form, you should set this parameter to a true value (like 1).
 
@@ -350,30 +350,30 @@ The contents of the `form_extra` variable are inserted into the form tag in the 
 
 See also, [_extra](var/udef_extra) control variable.
 
-### `DisplayForm()`
+### `display_form()`
 
-The form's `DisplayForm()` procedure is used to send the form to a player. By default, it is sent to `usr`, but you can pass in any mob reference you like.
+The form's `display_form()` procedure is used to send the form to a player. By default, it is sent to `usr`, but you can pass in any mob reference you like.
 
-You should create a new instance of the form for each call to `DisplayForm()`, unless you always wait until the form has been completely processed before displaying it again.
+You should create a new instance of the form for each call to `display_form()`, unless you always wait until the form has been completely processed before displaying it again.
 
 ### `Initialize()`
 
-The form's `Initialize()` procedure is called by `DisplayForm()` before generating the HTML. This is to allow you to initialize form variables. You do not have to do initialization of form variables here; it is simply defined for your convenience.
+The form's `Initialize()` procedure is called by `display_form()` before generating the HTML. This is to allow you to initialize form variables. You do not have to do initialization of form variables here; it is simply defined for your convenience.
 
-### `HtmlLayout()`
+### `get_html_layout()`
 
-You define the `HtmlLayout()` procedure to return the HTML text describing the form. The default procedure simply displays the name of each interface variable followed by the interface element. (You can also use the [_label](#form-label) control variable to specify an alternate prompt to display.)
+You define the `get_html_layout()` procedure to return the HTML text describing the form. The default procedure simply displays the name of each interface variable followed by the interface element. (You can also use the [_label](#form-label) control variable to specify an alternate prompt to display.)
 
-Perhaps the slickest part of the Form programming interface is how you embed each interface element in your form layout text. Before `HtmlLayout()` is called, each interface variable is automatically assigned to the corresponding HTML element. All you have to do is insert the variable into the layout text. That elliminates most of the noisy HTML so you can see what you are doing.
+Perhaps the slickest part of the Form programming interface is how you embed each interface element in your form layout text. Before `get_html_layout()` is called, each interface variable is automatically assigned to the corresponding HTML element. All you have to do is insert the variable into the layout text. That elliminates most of the noisy HTML so you can see what you are doing.
 
 If you are familiar with HTML, you may have noticed that the form layout does not include the actual `<our_form>` element. That is automatically generated for you before the form is submitted to the user.
 
-### `ProcessForm()`
+### `process_form()`
 
-This procedure is called when the user submits the form. Basic checks are performed first to make sure the form was indeed displayed to the user who is submitting it and that the input conforms to the specified limits. After that, `ProcessForm()` is called and you can act upon the user's input.
+This procedure is called when the user submits the form. Basic checks are performed first to make sure the form was indeed displayed to the user who is submitting it and that the input conforms to the specified limits. After that, `process_form()` is called and you can act upon the user's input.
 
-If the form is reusable, there may be multiple calls to `ProcessForm()` for each call to `DisplayForm()`. Otherwise, there will only be one.
+If the form is reusable, there may be multiple calls to `process_form()` for each call to `display_form()`. Otherwise, there will only be one.
 
-### `GetSelfUrl()`
+### `get_self_url()`
 
 This procedure returns a URL text string containing all of the form variables. It may be used, for example, to generate a hyperlink that causes the form to be processed. Currently, prompt variables are not included in the URL.

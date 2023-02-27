@@ -2,7 +2,7 @@
 
 	var/datum/dmui_form/Themed/new_form = new()
 
-	new_form.DisplayForm(src) //? Send usr the form.
+	new_form.display_form(src) //? Send usr the form.
 
 
 /datum/dmui_form/Themed
@@ -37,7 +37,7 @@
 	return ..()
 
 
-/datum/dmui_form/Themed/GetHtmlHead()
+/datum/dmui_form/Themed/get_html_header()
 	var/html_head = ""
 	html_head += "<style>[file2text('html/dmui-nano-common.css')]</style>"
 	if(form_title)
@@ -45,9 +45,9 @@
 	return html_head
 
 /// Returns form as a stand-alone document.
-/datum/dmui_form/Themed/GetHtmlDoc()
-	var/head = GetHtmlHead()
-	var/body = GetHtml()
+/datum/dmui_form/Themed/get_html_body()
+	var/head = get_html_header()
+	var/body = get_html()
 
 	return {"\
 <!DOCTYPE html>
@@ -72,7 +72,7 @@
 
 "}
 
-/datum/dmui_form/Themed/HtmlLayout()
+/datum/dmui_form/Themed/get_html_layout()
 	var/per = full_pressure ? 100 : pressure
 	return {"
 <div class='display'>
