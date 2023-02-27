@@ -385,9 +385,14 @@
 	var/head = GetHtmlHead()
 	var/body = GetHtml()
 
-	return {"\
+	return \
+{"
 
+<!DOCTYPE html>
 <html>
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+<meta http-equiv='content-language' content='en-us' />
 <head>[head]</head>
 <body>[body]</body>
 </html>
