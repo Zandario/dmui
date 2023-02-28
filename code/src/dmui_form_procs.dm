@@ -152,7 +152,7 @@
 						fv.values += rv.value
 
 					if(isnum(rv.value))
-						if(fv.input_type == AUTO)
+						if(isnull(fv.input_type))
 							fv.input_type = NUM_ITYPE
 
 					else if(fv.input_type == NUM_ITYPE)
@@ -170,7 +170,7 @@
 
 
 
-			if(fv.interface == AUTO || fv.interface == SUB_FORM)
+			if(isnull(fv.interface) || fv.interface == SUB_FORM)
 
 				var/datum/dmui_form/sf = vars[fv.name]
 
@@ -185,7 +185,7 @@
 
 
 
-			if(fv.interface == AUTO || fv.interface == BUTTON || fv.interface == PROMPT)
+			if(isnull(fv.interface) || fv.interface == BUTTON || fv.interface == PROMPT)
 				var/clickproc = "[fv.name]Click"
 
 				if(hascall(src, clickproc))
@@ -197,7 +197,7 @@
 						fv.clickproc = clickproc
 
 
-			if(fv.clickproc && fv.interface == AUTO)
+			if(fv.clickproc && isnull(fv.interface))
 				fv.interface = BUTTON
 
 

@@ -23,41 +23,41 @@
 	var/html
 	var/html_name = var_prefix + name
 
-	if(input_type == our_form.AUTO)
+	if(isnull(input_type))
 		if(istext(value))
-			input_type = our_form.TEXT_ITYPE
+			input_type = TEXT_ITYPE
 
 		else if(isnum(value))
-			input_type = our_form.NUM_ITYPE
+			input_type = NUM_ITYPE
 
 		else if(isicon(value))
-			input_type = our_form.ICON_ITYPE
+			input_type = ICON_ITYPE
 
 
-	if(interface == our_form.AUTO)
+	if(isnull(interface))
 		if(values)
-			interface = our_form.SELECT
+			interface = SELECT
 
 			if(istype(value,/list))
-				interface = our_form.MULTI_SELECT
+				interface = MULTI_SELECT
 
-		else if(input_type == our_form.ICON_ITYPE)
-			interface = our_form.PROMPT_FOR_ICON
+		else if(input_type == ICON_ITYPE)
+			interface = PROMPT_FOR_ICON
 
-		else if(input_type == our_form.SOUND_ITYPE)
-			interface = our_form.PROMPT_FOR_SOUND
+		else if(input_type == SOUND_ITYPE)
+			interface = PROMPT_FOR_SOUND
 
-		else if(input_type == our_form.FILE_ITYPE)
-			interface = our_form.PROMPT_FOR_FILE
+		else if(input_type == FILE_ITYPE)
+			interface = PROMPT_FOR_FILE
 
 		else if(findtext(size, "x"))
-			interface = our_form.TEXTAREA
+			interface = TEXTAREA
 
 		else if(istype(value, /datum/dmui_form))
-			interface = our_form.SUB_FORM
+			interface = SUB_FORM
 
 		else
-			interface = our_form.TEXT
+			interface = TEXT
 
 
 
@@ -65,32 +65,32 @@
 
 	if(hidden || form.form_hidden)
 		switch(interface)
-			if(our_form.HIDDEN_LIST,our_form.RADIO_OPTION,our_form.SUB_FORM)
+			if(HIDDEN_LIST, RADIO_OPTION, SUB_FORM)
 				//? Nothing??? @Zandario
 
-			if(our_form.CHECKBOX)
+			if(CHECKBOX)
 				//? This optimization also preserves boolean value at display time
 
 				if(value)
-					interface = our_form.HIDDEN
+					interface = HIDDEN
 
 				else
 					return
 
-			if(our_form.MULTI_SELECT,our_form.CHECKLIST)
-				interface = our_form.HIDDEN_LIST
+			if(MULTI_SELECT, CHECKLIST)
+				interface = HIDDEN_LIST
 
 			else
-				interface = our_form.HIDDEN
+				interface = HIDDEN
 
 
 
 	switch(interface)
-		if(our_form.SELECT,our_form.MULTI_SELECT)
+		if(SELECT, MULTI_SELECT)
 
 			html = "<select name=[html_name]"
 
-			if(interface == our_form.MULTI_SELECT)
+			if(interface == MULTI_SELECT)
 				html += " multiple"
 
 			html += ">"
@@ -110,7 +110,7 @@
 			html += "</select>"
 
 
-		if(our_form.TEXTAREA)
+		if(TEXTAREA)
 			var/row_col
 			var/wrap_html
 
@@ -128,10 +128,10 @@
 			html += "<textarea name=[html_name] [row_col][wrap_html]>[html_value]</textarea>"
 
 
-		if(our_form.TEXT,our_form.PASSWORD)
+		if(TEXT, PASSWORD)
 			html = "<input name=[html_name]"
 
-			if(interface == our_form.PASSWORD)
+			if(interface == PASSWORD)
 				html += " type=password"
 
 			else
@@ -149,7 +149,7 @@
 			html += " [extra]>"
 
 
-		if(our_form.CHECKBOX)
+		if(CHECKBOX)
 			html = "<input name=[html_name] type=checkbox value=1"
 
 			if(value)
@@ -158,7 +158,7 @@
 			html += " [extra]>"
 
 
-		if(our_form.RADIO_OPTION)
+		if(RADIO_OPTION)
 			html = "<input name='[radio_name]' type=radio value='[html_value]'"
 
 			if(checked)
@@ -167,35 +167,35 @@
 			html += " [extra]>"
 
 
-		if(our_form.RADIO)
+		if(RADIO)
 			return //not an interface element
 
 
-		if(our_form.RESET)
+		if(RESET)
 			if(value && !form.form_is_sub)
 				html = "<input type=reset value='[html_value]' [extra]>"
 
-		if(our_form.SUBMIT)
+		if(SUBMIT)
 			if(value && !form.form_is_sub)
 				html = "<input type=submit value='[html_value]' [extra]>"
 
-		if(our_form.BUTTON)
+		if(BUTTON)
 			if(click_script)
 				html = "<input id='button' type=button value='[label || html_value || name]' onClick='[click_script]' [extra]>"
 
-		if(our_form.PROMPT)
+		if(PROMPT)
 			if(click_script)
 				html = "<input type=button value='...' onClick='[click_script]' [extra]>"
 
-			else if(input_type == our_form.ICON_ITYPE || input_type == our_form.SOUND_ITYPE || input_type == our_form.FILE_ITYPE)
+			else if(input_type == ICON_ITYPE || input_type == SOUND_ITYPE || input_type == FILE_ITYPE)
 				html = "<input name=[html_name] type=file [extra]>"
 
 
-		if(our_form.HIDDEN)
+		if(HIDDEN)
 			html = "<input name=[html_name] type=hidden value='[html_value]' [extra]>"
 
 
-		if(our_form.SUB_FORM)
+		if(SUB_FORM)
 			var/datum/dmui_form/sf = value
 
 			if(hidden || form.form_hidden)
@@ -205,19 +205,19 @@
 				html = sf.get_html(form)
 
 
-		if(our_form.HIDDEN_LIST)
+		if(HIDDEN_LIST)
 			for(var/V in value)
 				html += "<input name=[html_name] value='[html_encode(V)]' type=hidden [extra]>\n"
 
 
-		if(our_form.CHECKLIST)
+		if(CHECKLIST)
 			html = list()
 
 			for(var/V in values)
 				html[V] = "<input name=[html_name] value='[html_encode(V)]' type=checkbox[(V in value) ? " checked" : ""] [extra]>"
 
 
-		if(our_form.RADIO_LIST)
+		if(RADIO_LIST)
 			html = list()
 
 			for(var/V in values)

@@ -14,6 +14,7 @@
 
 // BEGIN_INCLUDE
 #include "code\__compile_options.dm"
+#include "code\__DEFINES\dmui.dm"
 #include "code\__DEFINES\spaceman_dmm.dm"
 #include "code\src\dmui_form.dm"
 #include "code\src\dmui_form_procs.dm"

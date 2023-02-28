@@ -68,46 +68,7 @@
 	var/tmp/form_hidden
 
 
-	//# Constants
-	var/const/AUTO = null
 
-
-	//## Input types
-	var/const/TEXT_ITYPE  = 1
-	var/const/NUM_ITYPE   = 2
-	var/const/ICON_ITYPE  = 3
-	var/const/SOUND_ITYPE = 4
-	var/const/FILE_ITYPE  = 5
-
-
-	//## Interface elements
-	var/const/TEXT             = 1
-	var/const/PASSWORD         = 2
-	var/const/SELECT           = 3
-	var/const/MULTI_SELECT     = 4
-	var/const/CHECKBOX         = 5
-	var/const/RADIO            = 6  //! Variable that holds value of selected RADIO_OPTION.
-	var/const/RADIO_OPTION     = 7  //! Enumerated control variables _1, _2, _3, etc.
-	var/const/TEXTAREA         = 8  //! Input size is "[cols]x[rows]" or just rows.
-	var/const/HIDDEN           = 9
-	var/const/SUBMIT           = 10
-	var/const/RESET            = 11
-	var/const/BUTTON           = 12
-	var/const/PROMPT           = 13
-	var/const/PROMPT_FOR_ICON  = 14 //! Converts to PROMPT interface with ICON_ITYPE.
-	var/const/PROMPT_FOR_SOUND = 15 //! Converts to PROMPT interface with SOUND_ITYPE.
-	var/const/PROMPT_FOR_FILE  = 16 //! Converts to PROMPT interface with FILE_ITYPE.
-	var/const/SUB_FORM         = 17 //! Form object or list of them.
-	var/const/CHECKLIST        = 18 //! List of checkboxes (produces a list of items and their associated html at display time).
-	var/const/RADIO_LIST       = 19
-	var/const/HIDDEN_LIST      = 20
-
-	var/const/SUBMIT_CLICK = 1
-	var/const/BUTTON_CLICK = 2
-
-	var/const/NO_WRAP   = "off"
-	var/const/HARD_WRAP = "hard"
-	var/const/SOFT_WRAP = "soft"
 
 
 
