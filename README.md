@@ -78,7 +78,7 @@ You define a form by deriving your own from the base `/datum/dmui_form` type. Th
 
 Here is a very simple form definition.
 
-```js
+```dm
 // Newbie.dm
 
 /datum/dmui_form/Newbie
@@ -93,7 +93,7 @@ That defines a form type `Newbie` with three fields: name, gender, and race.
 
 You can submit this form to a player by calling `display_form()`.
 
-```js
+```dm
 // Newbie.dm
 
 /mob/verb/myinfo()
@@ -109,7 +109,7 @@ There are several things to note at this point. One is that the form doesn't do 
 
 When the form is complete, its `process_form()` procedure is called. You can define it to do whatever you want.
 
-```js
+```dm
 // Newbie.dm
 
 /mob/var/race //human, ogre, or jellyfish
@@ -127,7 +127,7 @@ It is a good idea to output something to the browser acknowledging receipt of th
 
 In the same way that the form variables were accessed in `process_form()`, they can be initialized in `Initialize()`. This is automaitcally called by `display_form` before generating the form's HTML.
 
-```js
+```dm
 // Newbie.dm
 
 /datum/dmui_form/Newbie/Initialize()
@@ -142,7 +142,7 @@ Of course, you are free to initialize the form variables in the same place where
 
 A text-box is a good interface element for entering the name, but it is not so good for race and gender, where the possible values are restricted. By telling the form to restrict the range of values the user may enter, it will automatically use a more appropriate interface element.
 
-```js
+```dm
 // Newbie.dm
 
 /datum/dmui_form/Newbie
@@ -165,7 +165,7 @@ There are other types of interface elements. You can learn about those in the re
 
 The layout of your form has so far been automatically generated. You can design the html yourself by overriding the `get_html_layout()` procedure.
 
-```js
+```dm
 // Newbie.dm
 
 /datum/dmui_form/Newbie/get_html_layout()
@@ -234,7 +234,7 @@ The `form_sub_path` variable contains extra path information in the form's URL, 
 
 The contents of the `form_extra` variable are inserted into the form tag in the html output. You could use this to insert extra code, such as Java Script that is not supported directly by the other form variables.
 
-```js
+```dm
 /datum/dmui_form/MyForm
 	form_extra = {"OnSubmit='return confirm("Are you sure?");'"}
 ```
@@ -279,7 +279,7 @@ The control variables are described in the following sections.
 
 By default, each variable you define creates a corresponding text box interface ellement. You can select a different interface element by defining an `_interface` control variable.
 
-```js
+```dm
 /datum/dmui_form/Login
 	var/name
 	var/password
@@ -404,7 +404,7 @@ If you need to insert some special html code into the input tag for an interface
 
 ##### Example
 
-```js
+```dm
 /datum/dmui_form/MyForm
 	var/submit_extra = {"OnClick='return confirm("Are you sure?");'"}
 ```
