@@ -1,5 +1,6 @@
 //# Constants
-
+#define ALL (~0)
+#define NONE 0 //! Used to indicate that a bitflag is not set.
 
 //## Input types
 #define TEXT_ITYPE  1
@@ -37,3 +38,12 @@
 #define NO_WRAP   "off"
 #define HARD_WRAP "hard"
 #define SOFT_WRAP "soft"
+
+
+//## DMUI Window param bitflag
+#define DMUI_NO_TITLEBAR     (1<<0)
+#define DMUI_CANNOT_CLOSE    (1<<1)
+#define DMUI_CANNOT_RESIZE   (1<<2)
+#define DMUI_CANNOT_MINIMIZE (1<<3)
+#define DMUI_CANNOT_MAXIMIZE (1<<4)
+#define DMUI_CANNOT_SCROLL   (1<<5)

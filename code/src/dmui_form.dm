@@ -1,6 +1,20 @@
 
 /datum/dmui_form
 
+	//## NEW
+
+	/// Only applicable when the page is sent as a window.
+	var/window_title = ""
+	var/window_size = "512x512"
+	var/window_param_flags = NONE
+	var/window_compiled_params
+
+	var/datum/host
+
+
+
+	//## LEGACY
+
 	var/submit = "Submit"
 	var/reset  = "Reset"
 
@@ -30,9 +44,6 @@
 
 	/// Extra html code to insert into the form tag.
 	var/tmp/form_extra
-
-	var/tmp/form_width  = 512
-	var/tmp/form_height = 512
 
 	//# internal stuff (no peeking)
 
@@ -64,16 +75,11 @@
 	/// True if this is a sub-form.
 	var/tmp/form_is_sub = FALSE
 
-	/// Hides the entire form (used by get_hidden_html()).
-	var/tmp/form_hidden
 
 
 
-
-
-
-/datum/dmui_form/New()
-	generate_elements()
+/datum/dmui_form/New(_host = null)
+	host = _host
 	return ..()
 
 

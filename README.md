@@ -44,8 +44,6 @@ Programs that generate HTML (or any other code for that matter) often appear rat
 
 - [Reference](#reference)
   - [Pre-Defined Interface Variables](#pre-defined-interface-variables)
-    - [submit](#submit)
-    - [reset](#reset)
     - [Non-Interface Variables](#non-interface-variables)
     - [Reusable Forms](#reusable-forms)
     - [Form Title](#form-title)
@@ -61,12 +59,6 @@ Programs that generate HTML (or any other code for that matter) often appear rat
     - [`get_self_url()`](#get_self_url)
   - [User Defined Interface Variables](#user-defined-interface-variables)
     - [Interface Types](#interface-types)
-    - [Display Size](#display-size)
-    - [Maximum Length](#maximum-length)
-    - [Possible Values](#possible-values)
-    - [Form Label](#form-label)
-    - [Hidden Variable](#hidden-variable)
-    - [Wrapping](#wrapping)
     - [Extra Input Parameters](#extra-input-parameters)
 
 
@@ -192,14 +184,6 @@ A form has three basic components: interface variables, graphical layout, and a 
 
 In addition to the interface elements defined above, there are two more: the submit and reset buttons. These are pre-defined for you.
 
-#### submit
-
-The submit interface variable is used to place the submit button on the form. You can assign a different value to this variable to change the text displayed on the button face. The default is "Submit". The special control variable `form_url` may be set to the URL that you want to receive the submitted form. This defaults to the form object used to display the form.
-
-#### reset
-
-The reset interface variable is used to place a reset button on the form. When the user pushes the reset button, the displayed form is restored to its initial state so the user can start over. You can assign a different value to this variable to change the text displayed on the button face. The default is "Reset". If you set it to null, the form will not contain a reset button.
-
 #### Non-Interface Variables
 
 In addition to interface variables and their associated control variables, you may have reason to define other variables that are used for your own purposes. These should be marked as such by defining them to be `global`, `const`, or `tmp`. Such variables will be ignored when constructing the form interface.
@@ -253,7 +237,7 @@ The form's `Initialize()` procedure is called by `display_form()` before generat
 
 ### `get_html_layout()`
 
-You define the `get_html_layout()` procedure to return the HTML text describing the form. The default procedure simply displays the name of each interface variable followed by the interface element. (You can also use the [_label](#form-label) control variable to specify an alternate prompt to display.)
+You define the `get_html_layout()` procedure to return the HTML text describing the form. The default procedure simply displays the name of each interface variable followed by the interface element.
 
 Perhaps the slickest part of the Form programming interface is how you embed each interface element in your form layout text. Before `get_html_layout()` is called, each interface variable is automatically assigned to the corresponding HTML element. All you have to do is insert the variable into the layout text. That elliminates most of the noisy HTML so you can see what you are doing.
 
@@ -326,10 +310,6 @@ A radio toggle lets the user pick one of a number of options. You don't use this
 
 This is like a CHECKLIST except the user may only choose one item from the list. The choices are assigned to `_values` and the user's response is assigned to the interface variable. You access the html by indexing the interface variable with each of the possible values, just as with CHECKLIST.
 
-##### HIDDEN
-
-This allows you to hide an interface variable from the user. You might want to do that when the form is one of a sequence of dialogues and you need to retain information from previous steps as you move along. Like any other interface type, you have to embed the variable in the html if you override get_html_layout(). To have the variable automatically embedded, use the `form_hidden` control variable instead.
-
 ##### BUTTON
 
 This generates a button on the form. When the user clicks it, your procedure (called varnameClick()) is called. The value of this variable (when display_form() is called) is displayed on the button face. If the value is null, the name of the variable is used instead.
@@ -353,38 +333,6 @@ This prompts the user for any file to upload. This works in CGI mode (through a 
 ##### SUB_FORM
 
 This is a variable containing another form object. It is the default interface type if you initialize the variable to a new instance of a form (which you have to do anyway for it to work). The sub-form is embedded in the main form and is submitted and processed as part of a single HTML form.
-
-#### Display Size
-
-The `_size` control variable specifies the amount of data to display at one time (without scrolling) in the interface element. It does not effect the maximum length of data that the user may enter.
-
-With a text box interface element, this specifies the number of characters that may be visible at one time. The default behavior depends on the browser. You can set your own default using `form_default_size`.
-
-For a TEXTAREA interface element, the size specifies the number of rows to display. In addition, the number of columns may be set using the format "30x10" where 30 is the number of columns and 10 is the number of rows. In that case, the interface element defaults to TEXTAREA.
-
-#### Maximum Length
-
-The `_maxlen` control variable specifies the maximum number of characters that the user may enter. If none is specified, `form_default_maxlen` will be used. If that is not specified, no limit will be applied.
-
-#### Possible Values
-
-The `_values` control variable specifies a list of values to display in a selection list. If it is defined, the interface element defaults to SELECT.
-
-#### Validate Input
-
-The `_validate` control variable determines whether it is an error to receive input from the user that is not in the values list. It is on by default.
-
-#### Form Label
-
-The `_label` control variable is used by the default form layout generator to label the interface element. If no label is specified, the variable name (capitalized) is used.
-
-#### Hidden Variable
-
-The `_hidden` control variable causes the variable to be automatically stored in the form but with no visible interface. (Assign _hidden to a true value.) This is a similar effect to the [HIDDEN](#hidden) interface type, except HIDDEN variables are not automatically embedded in the form if you override get_html_layout().
-
-#### Wrapping
-
-The `_wrap` control variable may be used to configure the text wrapping in a textarea edit box. It may be assigned to any of the following:
 
 ##### NO_WRAP
 

@@ -63,7 +63,7 @@
 
 	//? Some hidden elements are handled specially.
 
-	if(hidden || form.form_hidden)
+	if(hidden)
 		switch(interface)
 			if(HIDDEN_LIST, RADIO_OPTION, SUB_FORM)
 				//? Nothing??? @Zandario
@@ -198,11 +198,7 @@
 		if(SUB_FORM)
 			var/datum/dmui_form/sf = value
 
-			if(hidden || form.form_hidden)
-				html = sf.get_hidden_html(form)
-
-			else
-				html = sf.get_html(form)
+			html = sf.get_html(form)
 
 
 		if(HIDDEN_LIST)

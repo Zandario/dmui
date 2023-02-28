@@ -23,6 +23,8 @@
 
 
 /datum/dmui_form/Newbie/Initialize()
+	. = ..()
+
 	name   = usr.name
 	gender = usr.gender
 	race   = usr.race
@@ -40,15 +42,14 @@
 
 
 /datum/dmui_form/Newbie/get_html_layout()
-	return {"
-
-Your name: [name] <br>
-Your gender:      <br>
-[gender_1] male   <br>
-[gender_2] female <br>
-[gender_3] other  <br>
-Your race: [race] <br>
-
+	return \
+{"
+Your name: [name]
+<br>Your gender:
+<br>[gender_1] male
+<br>[gender_2] female
+<br>[gender_3] other
+<br>Your race: [race]
+<br>
 [submit]
-
 "}

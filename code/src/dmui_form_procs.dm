@@ -1,248 +1,3 @@
-/// Called in display_form().
-/datum/dmui_form/proc/Initialize()
-	return
-
-/// Called when the form is complete.
-/datum/dmui_form/proc/process_form()
-	return
-
-/// Examines user-defined variables and creates list of form interface elements.
-/datum/dmui_form/proc/generate_elements(parent_form)
-
-	var/myvars[] = vars.Copy() // vars list is slow, so save a copy of it
-
-	var/list/control_tags = list(
-		"values"    = 1,
-		"validate"  = 1,
-		"maxlen"    = 1,
-		"size"      = 1,
-		"wrap"      = 1,
-		"extra"     = 1,
-		"label"     = 1,
-		"hidden"    = 1,
-		"interface" = 1,
-	)
-
-	for(var/variable in myvars)
-		var/control = findtextEx(variable, "_")
-		var/next_control
-
-		while(control)
-			next_control = findtextEx(variable, "_", control+1)
-
-			if(!next_control)
-				break
-
-			control = next_control
-
-		if(control)
-			control = copytext(variable, control+1)
-
-			if(control in control_tags)
-				continue
-
-			if("[text2num(control)]" == control)
-				continue
-
-		if(issaved(vars[variable]) && variable != "tag")
-			var/datum/dmui_var/fv = new()
-
-			fv.name = variable
-
-			if(istext(vars[variable]))
-				fv.input_type = TEXT_ITYPE
-
-			else if(isnum(vars[variable]))
-				fv.input_type = NUM_ITYPE
-
-
-			fv.size = form_default_size
-
-			fv.maxlength = form_default_maxlen
-
-
-			if(variable == "submit")
-				fv.interface = SUBMIT
-
-			else if(variable == "reset")
-				fv.interface = RESET
-
-
-
-			var/var_values = "[variable]_values"
-			if(var_values in myvars)
-				fv.values = vars[var_values]
-
-
-
-			var/var_validate = "[variable]_validate"
-			if(var_validate in myvars)
-				fv.validate = vars[var_validate]
-
-
-
-			var/var_maxlen = "[variable]_maxlen"
-			if(var_maxlen in myvars)
-				fv.maxlength = vars[var_maxlen]
-
-
-
-			var/var_size = "[variable]_size"
-			if(var_size in myvars)
-				fv.size = vars[var_size]
-
-
-
-			var/var_wrap = "[variable]_wrap"
-			if(var_wrap in myvars)
-				fv.wrap = vars[var_wrap]
-
-
-
-			var/var_extra = "[variable]_extra"
-			if(var_extra in myvars)
-				fv.extra = vars[var_extra]
-
-
-
-			var/var_label = "[variable]_label"
-			if(var_label in myvars)
-				fv.label = vars[var_label]
-
-
-
-			var/var_hidden = "[variable]_hidden"
-			if(var_hidden in myvars)
-				fv.hidden = vars[var_hidden]
-
-
-
-			var/n
-
-			for(n=1, , n++)
-				var/var_n = "[variable]_[n]"
-
-				if(var_n in myvars)
-					fv.interface = RADIO
-
-
-					var/datum/dmui_var/rv = new()
-
-					rv.interface = RADIO_OPTION
-
-					rv.name = var_n
-
-					rv.radio_name = fv.name
-
-					rv.value = (vars[var_n] || n)
-
-					form_vars += rv
-
-
-					var/var_n_label = "[var_n]_label"
-
-					if(var_n_label in myvars)
-						rv.label = vars[var_n_label]
-
-
-
-					if(!fv.values)
-						fv.values = list(rv.value)
-					else
-						fv.values += rv.value
-
-					if(isnum(rv.value))
-						if(isnull(fv.input_type))
-							fv.input_type = NUM_ITYPE
-
-					else if(fv.input_type == NUM_ITYPE)
-						fv.input_type = TEXT_ITYPE
-
-				else
-					break
-
-
-
-			var/var_interface = "[variable]_interface"
-
-			if(var_interface in myvars)
-				fv.interface = vars[var_interface]
-
-
-
-			if(isnull(fv.interface) || fv.interface == SUB_FORM)
-
-				var/datum/dmui_form/sf = vars[fv.name]
-
-				if(istype(sf))
-					//TODO: make sure prefix plus sub-form variables do not conflict with any others on this form
-					sf.set_var_prefix("[form_var_prefix][fv.name]_")
-
-					fv.interface = SUB_FORM
-
-				else if(fv.interface == SUB_FORM)
-					world.log << "Error: [type]/var/[fv.name] must be a form object."
-
-
-
-			if(isnull(fv.interface) || fv.interface == BUTTON || fv.interface == PROMPT)
-				var/clickproc = "[fv.name]Click"
-
-				if(hascall(src, clickproc))
-					fv.clickproc = clickproc
-				else
-					clickproc = capitalize(clickproc)
-
-					if(hascall(src, clickproc))
-						fv.clickproc = clickproc
-
-
-			if(fv.clickproc && isnull(fv.interface))
-				fv.interface = BUTTON
-
-
-			if(fv.interface == PROMPT_FOR_ICON)
-				fv.interface  = PROMPT
-				fv.input_type = ICON_ITYPE
-
-			else if(fv.interface == PROMPT_FOR_SOUND)
-				fv.interface  = PROMPT
-				fv.input_type = SOUND_ITYPE
-
-			else if(fv.interface == PROMPT_FOR_FILE)
-				fv.interface  = PROMPT
-				fv.input_type = FILE_ITYPE
-
-			else if(fv.interface == PROMPT && !fv.clickproc)
-				world.log << "Error: [type]/var/[fv.name] needs a Click() proc or an input type."
-
-			else if(fv.interface == BUTTON && !fv.clickproc)
-				world.log << "Error: [type]/var/[fv.name] needs a Click() proc."
-
-
-			form_vars += fv
-
-
-
-/datum/dmui_form/proc/set_var_prefix(var_prefix)
-
-	form_var_prefix = var_prefix
-
-	for(var/datum/dmui_var/our_var as anything in form_vars) // Ah yes, vars in vars
-		if(our_var.interface == SUB_FORM)
-			var/datum/dmui_form/sub_form = vars[our_var.name]
-
-			sub_form.set_var_prefix("[form_var_prefix][our_var.name]_")
-
-
-/// Sets form_hidden and calls get_html().
-/datum/dmui_form/proc/get_hidden_html(parent_form)
-	form_hidden++
-	var/target_form = get_html(parent_form)
-	form_hidden--
-
-	return target_form
-
 
 /// Set up variables and call user-defined get_html_layout().
 /datum/dmui_form/proc/get_html(datum/dmui_form/parent_form)
@@ -250,7 +5,6 @@
 	var/html
 	var/body
 	var/datum/dmui_var/fv
-	var/submit_only = TRUE
 
 	form_is_sub = (parent_form && parent_form != src)
 
@@ -268,7 +22,6 @@
 
 				else //assume this is an upload field
 					form_method = "post"
-
 					form_enctype = "multipart/form-data"
 
 			if(SELECT,MULTI_SELECT,CHECKLIST,RADIO_LIST,HIDDEN_LIST)
@@ -281,21 +34,15 @@
 
 		vars[fv.name] = fv.generate_input_tag(src, form_var_prefix)
 
-	if(!form_hidden)
-		//? User generates html by inserting form variables.
-		body = get_html_layout()
+	//? User generates html by inserting form variables.
+	body = get_html_layout()
 
 	//? Restore variables and tag on hidden ones
 	for(fv in form_vars)
-		if(fv.hidden || form_hidden)
+		if(fv.hidden)
 			body += vars[fv.name]
 
 		vars[fv.name] = fv.value
-
-		switch(fv.interface)
-			if(SUBMIT,RESET,CHECKBOX)
-			else
-				submit_only = FALSE
 
 	if(!form_is_sub)
 		//? Add the <form> wrapper.
@@ -313,9 +60,6 @@
 		html = "<form method=[method][encoding] action='[get_submit_url(form_sub_path)]' [form_extra]>\n"
 		html += "<input type=hidden name=src value='[html_encode("\ref[src]")]'>\n"
 
-		if(submit_only)
-			//? Prevent solitary submit button from submitting an empty set of params (so form will be processed).
-			html += "<input type=hidden name=submit value=1>\n"
 		html += "[body]\n</form>"
 	else
 		html = body
@@ -337,9 +81,7 @@
 /// Return URL containing all form variables or specified parameters.
 /datum/dmui_form/proc/get_self_url(params, mob/user, passive)
 
-
 	var/plist[0]
-
 
 	if(ismob(params) && !user)
 		//? Shuffle args around for backwards compatibility
@@ -371,10 +113,14 @@
 	return {"document.location.href="[get_self_url(form_var_prefix + name, user, passive=TRUE)]""}
 
 
-/datum/dmui_form/proc/get_html_header()
-	if(form_title)
-		return "<title>[form_title]</title>"
+/datum/dmui_form/proc/get_js_functions(javascript)
+	SHOULD_CALL_PARENT(TRUE)
+	return {"<script language="javascript"> [DMJS_FUNCTIONS] [javascript ? javascript : null] </script>"}
 
+/datum/dmui_form/proc/get_html_header()
+	. = get_js_functions()
+	if(form_title)
+		. += "<title>[form_title]</title>"
 
 /// Returns form as a stand-alone document.
 /datum/dmui_form/proc/get_html_body()
@@ -426,15 +172,34 @@
 	start_waiting()
 
 
+/// Called in `display_form()`.
+/datum/dmui_form/proc/Initialize(mob/user)
+	SHOULD_CALL_PARENT(TRUE)
+
+	return TRUE
+
+#define COMPILE_ARGS "window=[window_key]\ref[host]&size=[window_size]\
+	[window_param_flags & DMUI_NO_TITLEBAR     ? "&titlebar=0"     : ""]\
+	[window_param_flags & DMUI_CANNOT_CLOSE    ? "&can_close=0"    : ""]\
+	[window_param_flags & DMUI_CANNOT_RESIZE   ? "&can_resize=0"   : ""]\
+	[window_param_flags & DMUI_CANNOT_MINIMIZE ? "&can_minimize=0" : ""]\
+	[window_param_flags & DMUI_CANNOT_MAXIMIZE ? "&can_maximize=0" : ""]\
+	[window_param_flags & DMUI_CANNOT_SCROLL   ? "&can_scroll=0"   : ""]"
+
 /datum/dmui_form/proc/display_form(mob/user)
 	setup_form(user)
-	var/compiled_args = "window=[window_key];size=[form_width]x[form_height];titlebar=[!fancy_window];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];"
-	user << browse(get_html_body(), compiled_args)
-	user << output(compiled_args)
+	window_compiled_params = COMPILE_ARGS
+	user << browse(get_html_body(), window_compiled_params)
+	user << output(window_compiled_params)
 
 	#ifdef DMUI_VERBOSE_LOGGING
 	user << output(html_encode("[get_html_body()]"))
 	#endif
+
+
+/// Called when the form is complete.
+/datum/dmui_form/proc/process_form()
+	return
 
 
 /**
@@ -489,7 +254,7 @@
 	var/html
 
 	for(fv in form_vars)
-		if(fv.hidden || form_hidden)
+		if(fv.hidden)
 			continue //hidden variables are automatically inserted
 
 		if(fv.interface == SUBMIT || fv.interface == RESET || fv.interface == RADIO)

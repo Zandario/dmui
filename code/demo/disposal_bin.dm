@@ -1,17 +1,14 @@
 /mob/verb/themed_example()
 
-	var/datum/dmui_form/disposal_bin/new_form = new()
+	var/datum/dmui_form/disposal_bin/new_form = new(src)
 
 	new_form.display_form(src) //? Send usr the form.
 
 
 /datum/dmui_form/disposal_bin
-	form_title = "Disposal Bin"
-	form_width  = 330
-	form_height = 190
-	can_scroll  = FALSE
-	can_resize  = FALSE
-	// fancy_window = TRUE
+	form_title  = "Disposal Bin"
+	window_size = "330x190"
+	window_param_flags = DMUI_CANNOT_RESIZE | DMUI_CANNOT_MINIMIZE | DMUI_CANNOT_MAXIMIZE | DMUI_CANNOT_SCROLL
 
 	var/pressure
 	var/full_pressure
@@ -32,11 +29,9 @@
 
 
 /datum/dmui_form/disposal_bin/get_html_header()
-	var/html_head = ""
-	html_head += "<style>[file2text('html/dmui-nano-common.css')]</style>"
-	if(form_title)
-		html_head += "<title>[form_title]</title>"
-	return html_head
+	. = ..()
+	. += "<style>[file2text('html/dmui-nano-common.css')]</style>"
+
 
 /// Returns form as a stand-alone document.
 /datum/dmui_form/disposal_bin/get_html_body()
