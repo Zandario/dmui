@@ -13,16 +13,17 @@
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
-#include "__compile_options.dm"
-#include "src\dmui_form.dm"
-#include "src\dmui_form_procs.dm"
-#include "src\dmui_var.dm"
+#include "code\__compile_options.dm"
+#include "code\__DEFINES\spaceman_dmm.dm"
+#include "code\src\dmui_form.dm"
+#include "code\src\dmui_form_procs.dm"
+#include "code\src\dmui_var.dm"
 // END_INCLUDE
 
 // BEGIN_DEMO
 #ifdef __MAIN__
-#include "demo\disposal_bin.dm"
-#include "demo\kitchen.dm"
-#include "demo\newbie.dm"
+#include "code\demo\disposal_bin.dm"
+#include "code\demo\kitchen.dm"
+#include "code\demo\newbie.dm"
 #endif
  // END_DEMO

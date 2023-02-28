@@ -1,11 +1,11 @@
-/mob/verb/ThemedForm()
+/mob/verb/themed_example()
 
-	var/datum/dmui_form/Themed/new_form = new()
+	var/datum/dmui_form/disposal_bin/new_form = new()
 
 	new_form.display_form(src) //? Send usr the form.
 
 
-/datum/dmui_form/Themed
+/datum/dmui_form/disposal_bin
 	form_title = "Disposal Bin"
 	form_width  = 330
 	form_height = 190
@@ -16,12 +16,6 @@
 	var/pressure
 	var/full_pressure
 
-	var/gender
-
-	var/gender_1 = "male"
-	var/gender_2 = "female"
-	var/gender_3 = "neuter"
-
 	var/flush
 	var/flush_interface = BUTTON
 
@@ -31,13 +25,13 @@
 	var/pressure_charging
 	var/pressure_charging_interface = BUTTON
 
-/datum/dmui_form/Themed/Initialize()
+/datum/dmui_form/disposal_bin/Initialize()
 	pressure = rand(0, 100)
 	full_pressure = pressure >= 100
 	return ..()
 
 
-/datum/dmui_form/Themed/get_html_header()
+/datum/dmui_form/disposal_bin/get_html_header()
 	var/html_head = ""
 	html_head += "<style>[file2text('html/dmui-nano-common.css')]</style>"
 	if(form_title)
@@ -45,7 +39,7 @@
 	return html_head
 
 /// Returns form as a stand-alone document.
-/datum/dmui_form/Themed/get_html_body()
+/datum/dmui_form/disposal_bin/get_html_body()
 	var/head = get_html_header()
 	var/body = get_html()
 
@@ -72,7 +66,7 @@
 
 "}
 
-/datum/dmui_form/Themed/get_html_layout()
+/datum/dmui_form/disposal_bin/get_html_layout()
 	var/per = full_pressure ? 100 : pressure
 	return {"
 <div class='display'>
@@ -105,11 +99,11 @@
 
 "}
 
-/datum/dmui_form/Themed/proc/flushClick()
+/datum/dmui_form/disposal_bin/proc/flushClick()
 	user << output("You flushed!")
 
-/datum/dmui_form/Themed/proc/ejectClick()
-	user << output("You ejected!")
+/datum/dmui_form/disposal_bin/proc/ejectClick()
+	user << output("You ejected!") // Suspicious.
 
-/datum/dmui_form/Themed/proc/pressure_chargingClick()
+/datum/dmui_form/disposal_bin/proc/pressure_chargingClick()
 	user << output("You pressed pressure_charging!")
