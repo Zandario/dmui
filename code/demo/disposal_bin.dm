@@ -1,11 +1,11 @@
 /mob/verb/themed_example()
 
-	var/datum/dmui_form/disposal_bin/new_form = new()
+	var/buoy_form/disposal_bin/new_form = new()
 
 	new_form.display_form(src) //? Send usr the form.
 
 
-/datum/dmui_form/disposal_bin
+/buoy_form/disposal_bin
 	form_title = "Disposal Bin"
 	form_width  = 330
 	form_height = 190
@@ -25,13 +25,13 @@
 	var/pressure_charging
 	var/pressure_charging_interface = BUTTON
 
-/datum/dmui_form/disposal_bin/Initialize()
+/buoy_form/disposal_bin/Initialize()
 	pressure = rand(0, 100)
 	full_pressure = pressure >= 100
 	return ..()
 
 
-/datum/dmui_form/disposal_bin/get_html_header()
+/buoy_form/disposal_bin/get_html_header()
 	var/html_head = ""
 	html_head += "<style>[file2text('html/dmui-nano-common.css')]</style>"
 	if(form_title)
@@ -39,7 +39,7 @@
 	return html_head
 
 /// Returns form as a stand-alone document.
-/datum/dmui_form/disposal_bin/get_html_body()
+/buoy_form/disposal_bin/get_html_body()
 	var/head = get_html_header()
 	var/body = get_html()
 
@@ -66,7 +66,7 @@
 
 "}
 
-/datum/dmui_form/disposal_bin/get_html_layout()
+/buoy_form/disposal_bin/get_html_layout()
 	var/per = full_pressure ? 100 : pressure
 	return {"
 <div class='display'>
@@ -99,11 +99,11 @@
 
 "}
 
-/datum/dmui_form/disposal_bin/proc/flushClick()
+/buoy_form/disposal_bin/proc/flushClick()
 	user << output("You flushed!")
 
-/datum/dmui_form/disposal_bin/proc/ejectClick()
+/buoy_form/disposal_bin/proc/ejectClick()
 	user << output("You ejected!") // Suspicious.
 
-/datum/dmui_form/disposal_bin/proc/pressure_chargingClick()
+/buoy_form/disposal_bin/proc/pressure_chargingClick()
 	user << output("You pressed pressure_charging!")

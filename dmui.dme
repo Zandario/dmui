@@ -18,7 +18,8 @@
 #include "code\__DEFINES\spaceman_dmm.dm"
 #include "code\src\dmui_form.dm"
 #include "code\src\dmui_form_procs.dm"
-#include "code\src\dmui_var.dm"
+#include "code\src\elements\_element.dm"
+#include "code\src\elements\button.dm"
 // END_INCLUDE
 
 // BEGIN_DEMO

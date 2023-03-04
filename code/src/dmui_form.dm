@@ -1,5 +1,5 @@
 
-/datum/dmui_form
+/buoy_form
 
 	var/submit = "Submit"
 	var/reset  = "Reset"
@@ -37,7 +37,7 @@
 	//# internal stuff (no peeking)
 
 	/// List of user-defined form variables.
-	var/tmp/datum/dmui_var/form_vars[0]
+	var/tmp/buoy_element/form_vars[0]
 
 	/// The mob who opened/is using the UI.
 	var/tmp/mob/user
@@ -72,14 +72,14 @@
 
 
 
-/datum/dmui_form/New()
+/buoy_form/New()
 	generate_elements()
 	return ..()
 
 
 
 
-/datum/dmui_form/Topic(href, params[])
+/buoy_form/Topic(href, params[])
 	if(usr != user)
 		world.log << "Illegal form call by ([usr],[type])."
 
@@ -93,7 +93,7 @@
 				form_sub_path = copytext(href, 2, qry)
 
 
-	var/datum/dmui_var/fv
+	var/buoy_element/fv
 
 	for(fv in form_vars)
 		var/html_name = form_var_prefix + fv.name
@@ -213,7 +213,7 @@
 
 	for(fv in form_vars)
 		if(fv.interface == SUB_FORM)
-			var/datum/dmui_form/sf = vars[fv.name]
+			var/buoy_form/sf = vars[fv.name]
 
 			var/ret = sf.submit_form(href,usr,params)
 

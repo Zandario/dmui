@@ -1,13 +1,13 @@
 /// Called in display_form().
-/datum/dmui_form/proc/Initialize()
+/buoy_form/proc/Initialize()
 	return
 
 /// Called when the form is complete.
-/datum/dmui_form/proc/process_form()
+/buoy_form/proc/process_form()
 	return
 
 /// Examines user-defined variables and creates list of form interface elements.
-/datum/dmui_form/proc/generate_elements(parent_form)
+/buoy_form/proc/generate_elements(parent_form)
 
 	var/myvars[] = vars.Copy() // vars list is slow, so save a copy of it
 
@@ -45,7 +45,7 @@
 				continue
 
 		if(issaved(vars[variable]) && variable != "tag")
-			var/datum/dmui_var/fv = new()
+			var/buoy_element/fv = new()
 
 			fv.name = variable
 
@@ -126,7 +126,7 @@
 					fv.interface = RADIO
 
 
-					var/datum/dmui_var/rv = new()
+					var/buoy_element/rv = new()
 
 					rv.interface = RADIO_OPTION
 
@@ -172,7 +172,7 @@
 
 			if(isnull(fv.interface) || fv.interface == SUB_FORM)
 
-				var/datum/dmui_form/sf = vars[fv.name]
+				var/buoy_form/sf = vars[fv.name]
 
 				if(istype(sf))
 					//TODO: make sure prefix plus sub-form variables do not conflict with any others on this form
@@ -224,19 +224,19 @@
 
 
 
-/datum/dmui_form/proc/set_var_prefix(var_prefix)
+/buoy_form/proc/set_var_prefix(var_prefix)
 
 	form_var_prefix = var_prefix
 
-	for(var/datum/dmui_var/our_var as anything in form_vars) // Ah yes, vars in vars
+	for(var/buoy_element/our_var as anything in form_vars) // Ah yes, vars in vars
 		if(our_var.interface == SUB_FORM)
-			var/datum/dmui_form/sub_form = vars[our_var.name]
+			var/buoy_form/sub_form = vars[our_var.name]
 
 			sub_form.set_var_prefix("[form_var_prefix][our_var.name]_")
 
 
 /// Sets form_hidden and calls get_html().
-/datum/dmui_form/proc/get_hidden_html(parent_form)
+/buoy_form/proc/get_hidden_html(parent_form)
 	form_hidden++
 	var/target_form = get_html(parent_form)
 	form_hidden--
@@ -245,11 +245,11 @@
 
 
 /// Set up variables and call user-defined get_html_layout().
-/datum/dmui_form/proc/get_html(datum/dmui_form/parent_form)
+/buoy_form/proc/get_html(buoy_form/parent_form)
 
 	var/html
 	var/body
-	var/datum/dmui_var/fv
+	var/buoy_element/fv
 	var/submit_only = TRUE
 
 	form_is_sub = (parent_form && parent_form != src)
@@ -279,7 +279,7 @@
 
 		fv.html_value = html_encode(fv.value)
 
-		vars[fv.name] = fv.generate_input_tag(src, form_var_prefix)
+		vars[fv.name] = fv.Initialize(src, form_var_prefix)
 
 	if(!form_hidden)
 		//? User generates html by inserting form variables.
@@ -323,7 +323,7 @@
 	return html
 
 
-/datum/dmui_form/proc/get_submit_url(sub_path)
+/buoy_form/proc/get_submit_url(sub_path)
 	if(form_url)
 		return form_url
 
@@ -335,7 +335,7 @@
 
 
 /// Return URL containing all form variables or specified parameters.
-/datum/dmui_form/proc/get_self_url(params, mob/user, passive)
+/buoy_form/proc/get_self_url(params, mob/user, passive)
 
 
 	var/plist[0]
@@ -352,7 +352,7 @@
 		else
 			plist = params
 	else
-		for(var/datum/dmui_var/our_var as anything in form_vars)
+		for(var/buoy_element/our_var as anything in form_vars)
 			switch(our_var.interface)
 				if(RADIO_OPTION,BUTTON,PROMPT,SUBMIT,RESET)
 					continue
@@ -367,17 +367,17 @@
 	return html_encode("[get_submit_url(form_sub_path)]?[list2params(plist)]")
 
 
-/datum/dmui_form/proc/get_button_script(name, datum/dmui_form/parent_form)
+/buoy_form/proc/get_button_script(name, buoy_form/parent_form)
 	return {"document.location.href="[get_self_url(form_var_prefix + name, user, passive=TRUE)]""}
 
 
-/datum/dmui_form/proc/get_html_header()
+/buoy_form/proc/get_html_header()
 	if(form_title)
 		return "<title>[form_title]</title>"
 
 
 /// Returns form as a stand-alone document.
-/datum/dmui_form/proc/get_html_body()
+/buoy_form/proc/get_html_body()
 	var/head = get_html_header()
 	var/body = get_html()
 
@@ -400,7 +400,7 @@
  * Call this to send form to user.
  * Do everything except display the form.
  */
-/datum/dmui_form/proc/setup_form(mob/user)
+/buoy_form/proc/setup_form(mob/user)
 	if(form_waiting)
 		world.log << "Error: display_form([user]) called before previous submission finished."
 		form_waiting = null
@@ -417,16 +417,16 @@
 
 	Initialize()
 
-	for(var/datum/dmui_var/our_var as anything in form_vars)
+	for(var/buoy_element/our_var as anything in form_vars)
 		if(our_var.interface == SUB_FORM)
-			var/datum/dmui_form/sub_form = vars[our_var.name]
+			var/buoy_form/sub_form = vars[our_var.name]
 			//TODO: could call sub_form.setup_form() here but code currently assumes lack of start_waiting() call on sub-forms
 			sub_form.Initialize()
 
 	start_waiting()
 
 
-/datum/dmui_form/proc/display_form(mob/user)
+/buoy_form/proc/display_form(mob/user)
 	setup_form(user)
 	var/compiled_args = "window=[window_key];size=[form_width]x[form_height];titlebar=[!fancy_window];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];"
 	user << browse(get_html_body(), compiled_args)
@@ -443,14 +443,14 @@
  * This is primarily used by CGI scripts on the web
  * optional params list contains the pre-parsed contents of href
  */
-/datum/dmui_form/proc/submit_form(href, mob/user, params)
+/buoy_form/proc/submit_form(href, mob/user, params)
 	if(!form_wait_count)
 		start_waiting()
 
 	return Topic(href, params)
 
 
-/datum/dmui_form/proc/start_waiting()
+/buoy_form/proc/start_waiting()
 	if(isnull(user))
 		world.log << "Error: start_waiting() called without a user."
 		return
@@ -458,7 +458,7 @@
 	form_wait_count += 1
 
 
-/datum/dmui_form/proc/stop_waiting()
+/buoy_form/proc/stop_waiting()
 	if(form_wait_count)
 		form_wait_count -= 1
 
@@ -473,7 +473,7 @@
 		process_form()
 
 
-/datum/dmui_form/proc/capitalize(txt)
+/buoy_form/proc/capitalize(txt)
 	return uppertext(copytext(txt, 1, 2)) + copytext(txt, 2)
 
 
@@ -484,8 +484,8 @@
  * It makes a very simple (and probably ugly) form interface for the given variables.
  * It does make rapid form development a breeze, though.
  */
-/datum/dmui_form/proc/get_html_layout()
-	var/datum/dmui_var/fv
+/buoy_form/proc/get_html_layout()
+	var/buoy_element/fv
 	var/html
 
 	for(fv in form_vars)

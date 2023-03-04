@@ -1,10 +1,10 @@
 /mob/verb/KitchenForm()
 
-	var/datum/dmui_form/Kitchen/form = new()
+	var/buoy_form/Kitchen/form = new()
 
 	form.display_form(src) //? Send usr the form.
 
-/datum/dmui_form/Kitchen
+/buoy_form/Kitchen
 
 	var/text
 	var/text_interface = TEXT
