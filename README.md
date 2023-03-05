@@ -1,4 +1,4 @@
-# DM DMUI Library
+# BUOY UI Library
 
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/Zandario/dmui.svg)](https://isitmaintained.com/project/Zandario/dmui "Percentage of issues still open")
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/Zandario/dmui.svg)](https://isitmaintained.com/project/Zandario/dmui "Average time to resolve an issue")
@@ -25,7 +25,7 @@ This project was originally **Dantom's HTML Library** but I've since rewritten i
 
 With that out of the way, I present to you the...
 
-## DM DMUI Library
+## BUOY UI Library
 
 
 You can use HTML forms to obtain information from users in a graphical dialogue. To retrieve a single piece of information, one normally uses input(), but a long chain of prompts can become irksome to the user. The solution is to create a form containing entries for each item.

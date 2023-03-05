@@ -1,4 +1,4 @@
-environment = "dmui.dme"
+environment = "buoy.dme"
 
 [langserver]
 dreamchecker = true

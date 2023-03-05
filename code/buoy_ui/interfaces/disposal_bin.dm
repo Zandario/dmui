@@ -33,7 +33,7 @@
 
 /buoy_interface/disposal_bin/get_html_header()
 	var/html_head = ""
-	html_head += "<style>[file2text('html/dmui-nano-common.css')]</style>"
+	html_head += "<style>[file2text('html/buoy-nano-common.css')]</style>"
 	if(form_title)
 		html_head += "<title>[form_title]</title>"
 	return html_head
