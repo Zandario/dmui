@@ -1,13 +1,9 @@
-/// Called in display_form().
-/buoy_form/proc/Initialize()
-	return
-
 /// Called when the form is complete.
-/buoy_form/proc/process_form()
+/buoy_interface/proc/process_form()
 	return
 
 /// Examines user-defined variables and creates list of form interface elements.
-/buoy_form/proc/generate_elements(parent_form)
+/buoy_interface/proc/generate_elements(parent_form)
 
 	var/myvars[] = vars.Copy() // vars list is slow, so save a copy of it
 
@@ -44,8 +40,8 @@
 			if("[text2num(control)]" == control)
 				continue
 
-		if(issaved(vars[variable]) && variable != "tag")
-			var/buoy_element/fv = new()
+		if(issaved(vars[variable]) && !(variable in blacklisted_vars))
+			var/buoy_component/fv = new()
 
 			fv.name = variable
 
@@ -126,7 +122,7 @@
 					fv.interface = RADIO
 
 
-					var/buoy_element/rv = new()
+					var/buoy_component/rv = new()
 
 					rv.interface = RADIO_OPTION
 
@@ -172,7 +168,7 @@
 
 			if(isnull(fv.interface) || fv.interface == SUB_FORM)
 
-				var/buoy_form/sf = vars[fv.name]
+				var/buoy_interface/sf = vars[fv.name]
 
 				if(istype(sf))
 					//TODO: make sure prefix plus sub-form variables do not conflict with any others on this form
@@ -224,19 +220,19 @@
 
 
 
-/buoy_form/proc/set_var_prefix(var_prefix)
+/buoy_interface/proc/set_var_prefix(var_prefix)
 
 	form_var_prefix = var_prefix
 
-	for(var/buoy_element/our_var as anything in form_vars) // Ah yes, vars in vars
+	for(var/buoy_component/our_var as anything in form_vars) // Ah yes, vars in vars
 		if(our_var.interface == SUB_FORM)
-			var/buoy_form/sub_form = vars[our_var.name]
+			var/buoy_interface/sub_form = vars[our_var.name]
 
 			sub_form.set_var_prefix("[form_var_prefix][our_var.name]_")
 
 
 /// Sets form_hidden and calls get_html().
-/buoy_form/proc/get_hidden_html(parent_form)
+/buoy_interface/proc/get_hidden_html(parent_form)
 	form_hidden++
 	var/target_form = get_html(parent_form)
 	form_hidden--
@@ -245,11 +241,11 @@
 
 
 /// Set up variables and call user-defined get_html_layout().
-/buoy_form/proc/get_html(buoy_form/parent_form)
+/buoy_interface/proc/get_html(buoy_interface/parent_form)
 
 	var/html
 	var/body
-	var/buoy_element/fv
+	var/buoy_component/fv
 	var/submit_only = TRUE
 
 	form_is_sub = (parent_form && parent_form != src)
@@ -323,7 +319,7 @@
 	return html
 
 
-/buoy_form/proc/get_submit_url(sub_path)
+/buoy_interface/proc/get_submit_url(sub_path)
 	if(form_url)
 		return form_url
 
@@ -335,7 +331,7 @@
 
 
 /// Return URL containing all form variables or specified parameters.
-/buoy_form/proc/get_self_url(params, mob/user, passive)
+/buoy_interface/proc/get_self_url(params, mob/user, passive)
 
 
 	var/plist[0]
@@ -352,7 +348,7 @@
 		else
 			plist = params
 	else
-		for(var/buoy_element/our_var as anything in form_vars)
+		for(var/buoy_component/our_var as anything in form_vars)
 			switch(our_var.interface)
 				if(RADIO_OPTION,BUTTON,PROMPT,SUBMIT,RESET)
 					continue
@@ -367,17 +363,17 @@
 	return html_encode("[get_submit_url(form_sub_path)]?[list2params(plist)]")
 
 
-/buoy_form/proc/get_button_script(name, buoy_form/parent_form)
+/buoy_interface/proc/get_button_script(name, buoy_interface/parent_form)
 	return {"document.location.href="[get_self_url(form_var_prefix + name, user, passive=TRUE)]""}
 
 
-/buoy_form/proc/get_html_header()
+/buoy_interface/proc/get_html_header()
 	if(form_title)
 		return "<title>[form_title]</title>"
 
 
 /// Returns form as a stand-alone document.
-/buoy_form/proc/get_html_body()
+/buoy_interface/proc/get_html_body()
 	var/head = get_html_header()
 	var/body = get_html()
 
@@ -400,7 +396,7 @@
  * Call this to send form to user.
  * Do everything except display the form.
  */
-/buoy_form/proc/setup_form(mob/user)
+/buoy_interface/proc/setup_form(mob/user)
 	if(form_waiting)
 		world.log << "Error: display_form([user]) called before previous submission finished."
 		form_waiting = null
@@ -417,23 +413,23 @@
 
 	Initialize()
 
-	for(var/buoy_element/our_var as anything in form_vars)
+	for(var/buoy_component/our_var as anything in form_vars)
 		if(our_var.interface == SUB_FORM)
-			var/buoy_form/sub_form = vars[our_var.name]
+			var/buoy_interface/sub_form = vars[our_var.name]
 			//TODO: could call sub_form.setup_form() here but code currently assumes lack of start_waiting() call on sub-forms
 			sub_form.Initialize()
 
 	start_waiting()
 
 
-/buoy_form/proc/display_form(mob/user)
+/buoy_interface/proc/display_form(mob/user)
 	setup_form(user)
 	var/compiled_args = "window=[window_key];size=[form_width]x[form_height];titlebar=[!fancy_window];can_resize=[can_resize];can_scroll=[can_scroll];can_minimize=[can_minimize];"
-	user << browse(get_html_body(), compiled_args)
-	user << output(compiled_args)
+	SEND_BROWSER(user, get_html_body(), compiled_args)
+	SEND_OUTPUT(user, compiled_args)
 
 	#ifdef DMUI_VERBOSE_LOGGING
-	user << output(html_encode("[get_html_body()]"))
+	SEND_OUTPUT(user, html_encode("[get_html_body()]"))
 	#endif
 
 
@@ -443,14 +439,14 @@
  * This is primarily used by CGI scripts on the web
  * optional params list contains the pre-parsed contents of href
  */
-/buoy_form/proc/submit_form(href, mob/user, params)
+/buoy_interface/proc/submit_form(href, mob/user, params)
 	if(!form_wait_count)
 		start_waiting()
 
 	return Topic(href, params)
 
 
-/buoy_form/proc/start_waiting()
+/buoy_interface/proc/start_waiting()
 	if(isnull(user))
 		world.log << "Error: start_waiting() called without a user."
 		return
@@ -458,7 +454,7 @@
 	form_wait_count += 1
 
 
-/buoy_form/proc/stop_waiting()
+/buoy_interface/proc/stop_waiting()
 	if(form_wait_count)
 		form_wait_count -= 1
 
@@ -473,7 +469,7 @@
 		process_form()
 
 
-/buoy_form/proc/capitalize(txt)
+/buoy_interface/proc/capitalize(txt)
 	return uppertext(copytext(txt, 1, 2)) + copytext(txt, 2)
 
 
@@ -484,8 +480,8 @@
  * It makes a very simple (and probably ugly) form interface for the given variables.
  * It does make rapid form development a breeze, though.
  */
-/buoy_form/proc/get_html_layout()
-	var/buoy_element/fv
+/buoy_interface/proc/get_html_layout()
+	var/buoy_component/fv
 	var/html
 
 	for(fv in form_vars)

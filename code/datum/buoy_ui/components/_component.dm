@@ -1,4 +1,5 @@
-/buoy_element
+/buoy_component
+	abstract_type = /buoy_component
 	var/name
 	var/value
 	var/html_value
@@ -16,10 +17,10 @@
 	var/validate = TRUE
 	var/clickproc
 	var/click_script
-	var/buoy_form/our_form
+	var/buoy_interface/our_form
 
 /// Generate the html for an input variable.
-/buoy_element/proc/Initialize(buoy_form/form, var_prefix)
+/buoy_component/proc/Initialize(buoy_interface/form, var_prefix, ...)
 	var/html_name = var_prefix + name
 
 	if(isnull(input_type))
@@ -44,7 +45,7 @@
 	return handle_interface(form, html_name)
 
 
-/buoy_element/proc/auto_generate_interface()
+/buoy_component/proc/auto_generate_interface()
 	if(!isnull(interface))
 		return // wtf dude. //TODO: stack_trace
 
@@ -57,7 +58,7 @@
 	else if(findtext(size, "x"))
 		interface = TEXTAREA
 
-	else if(istype(value, /buoy_form))
+	else if(istype(value, /buoy_interface))
 		interface = SUB_FORM
 
 	else switch(input_type)
@@ -73,7 +74,7 @@
 			interface = TEXT
 
 
-/buoy_element/proc/handle_hidden()
+/buoy_component/proc/handle_hidden()
 	switch(interface)
 		if(HIDDEN_LIST, RADIO_OPTION, SUB_FORM)
 			//? Nothing??? @Zandario
@@ -95,7 +96,7 @@
 
 
 
-/buoy_element/proc/handle_interface(buoy_form/form, html_name)
+/buoy_component/proc/handle_interface(buoy_interface/form, html_name)
 	switch(interface)
 		if(SELECT, MULTI_SELECT)
 
@@ -207,7 +208,7 @@
 
 
 		if(SUB_FORM)
-			var/buoy_form/sf = value
+			var/buoy_interface/sf = value
 
 			if(hidden || form.form_hidden)
 				. = sf.get_hidden_html(form)

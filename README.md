@@ -72,7 +72,7 @@ Programs that generate HTML (or any other code for that matter) often appear rat
 
 ## Tutorial
 
-You define a form by deriving your own from the base `/buoy_form` type. The variables you define become entry fields in the form. These are called interface elements.
+You define a form by deriving your own from the base `/buoy_interface` type. The variables you define become entry fields in the form. These are called interface elements.
 
 ### Defining a Form
 
@@ -81,7 +81,7 @@ Here is a very simple form definition.
 ```dm
 // Newbie.dm
 
-/buoy_form/Newbie
+/buoy_interface/Newbie
 	var/name
 	var/gender
 	var/race
@@ -97,7 +97,7 @@ You can submit this form to a player by calling `display_form()`.
 // Newbie.dm
 
 /mob/verb/myinfo()
-	var/buoy_form/Newbie/new_form = new()
+	var/buoy_interface/Newbie/new_form = new()
 	new_form.display_form() //? Send our user the form.
 ```
 
@@ -114,7 +114,7 @@ When the form is complete, its `process_form()` procedure is called. You can def
 
 /mob/var/race //human, ogre, or jellyfish
 
-/buoy_form/Newbie/process_form()
+/buoy_interface/Newbie/process_form()
 	usr.name   = name
 	usr.gender = gender
 	usr.race   = race
@@ -130,7 +130,7 @@ In the same way that the form variables were accessed in `process_form()`, they 
 ```dm
 // Newbie.dm
 
-/buoy_form/Newbie/Initialize()
+/buoy_interface/Newbie/Initialize()
 	name   = usr.name
 	gender = usr.gender
 	race   = usr.race
@@ -145,7 +145,7 @@ A text-box is a good interface element for entering the name, but it is not so g
 ```dm
 // Newbie.dm
 
-/buoy_form/Newbie
+/buoy_interface/Newbie
 	var/name
 	var/gender
 	var/gender_1 = "male"
@@ -168,7 +168,7 @@ The layout of your form has so far been automatically generated. You can design 
 ```dm
 // Newbie.dm
 
-/buoy_form/Newbie/get_html_layout()
+/buoy_interface/Newbie/get_html_layout()
 	return {"
 Your name: [name] <br>
 Your gender:      <br>
@@ -235,7 +235,7 @@ The `form_sub_path` variable contains extra path information in the form's URL, 
 The contents of the `form_extra` variable are inserted into the form tag in the html output. You could use this to insert extra code, such as Java Script that is not supported directly by the other form variables.
 
 ```dm
-/buoy_form/MyForm
+/buoy_interface/MyForm
 	form_extra = {"OnSubmit='return confirm("Are you sure?");'"}
 ```
 
@@ -280,7 +280,7 @@ The control variables are described in the following sections.
 By default, each variable you define creates a corresponding text box interface ellement. You can select a different interface element by defining an `_interface` control variable.
 
 ```dm
-/buoy_form/Login
+/buoy_interface/Login
 	var/name
 	var/password
 	var/password_interface = PASSWORD
@@ -405,7 +405,7 @@ If you need to insert some special html code into the input tag for an interface
 ##### Example
 
 ```dm
-/buoy_form/MyForm
+/buoy_interface/MyForm
 	var/submit_extra = {"OnClick='return confirm("Are you sure?");'"}
 ```
 

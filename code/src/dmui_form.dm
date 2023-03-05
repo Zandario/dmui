@@ -1,5 +1,19 @@
 
-/buoy_form
+var/global/static/buoy_component/buoy_components_by_module = list()
+var/global/static/buoy_module/buoy_module_by_interface = list()
+
+/buoy_interface
+	abstract_type = /buoy_interface
+
+	var/name = "Buoy Interface"
+
+	var/tmp/buoy_module/modules
+
+	var/list/blacklisted_vars = list(
+		"blacklisted_vars",
+		"abstract_type",
+		"tag",
+	)
 
 	var/submit = "Submit"
 	var/reset  = "Reset"
@@ -37,7 +51,7 @@
 	//# internal stuff (no peeking)
 
 	/// List of user-defined form variables.
-	var/tmp/buoy_element/form_vars[0]
+	var/tmp/buoy_component/form_vars[0]
 
 	/// The mob who opened/is using the UI.
 	var/tmp/mob/user
@@ -72,14 +86,22 @@
 
 
 
-/buoy_form/New()
+/buoy_interface/New()
 	generate_elements()
 	return ..()
 
+/buoy_interface/New()
+	. = ..()
+	if(modules)
+		for(var/buoy_module/_module in modules)
+			modules[_module] = new(src)
+
+/buoy_interface/proc/Initialize(...)
 
 
 
-/buoy_form/Topic(href, params[])
+
+/buoy_interface/Topic(href, params[])
 	if(usr != user)
 		world.log << "Illegal form call by ([usr],[type])."
 
@@ -93,7 +115,7 @@
 				form_sub_path = copytext(href, 2, qry)
 
 
-	var/buoy_element/fv
+	var/buoy_component/fv
 
 	for(fv in form_vars)
 		var/html_name = form_var_prefix + fv.name
@@ -213,7 +235,7 @@
 
 	for(fv in form_vars)
 		if(fv.interface == SUB_FORM)
-			var/buoy_form/sf = vars[fv.name]
+			var/buoy_interface/sf = vars[fv.name]
 
 			var/ret = sf.submit_form(href,usr,params)
 
