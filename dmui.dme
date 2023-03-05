@@ -19,20 +19,15 @@
 #include "code\__DEFINES\logging.dm"
 #include "code\__DEFINES\spaceman_dmm.dm"
 #include "code\__DEFINES\stack_trace.dm"
+#include "code\buoy_ui\_component.dm"
+#include "code\buoy_ui\_interface.dm"
+#include "code\buoy_ui\_module.dm"
+#include "code\buoy_ui\buoy_processing.dm"
+#include "code\buoy_ui\client_handler.dm"
+#include "code\buoy_ui\components\button.dm"
+#include "code\buoy_ui\interfaces\disposal_bin.dm"
+#include "code\buoy_ui\interfaces\kitchen.dm"
+#include "code\buoy_ui\interfaces\newbie.dm"
 #include "code\datum\is_abstract.dm"
-#include "code\datum\buoy_ui\components\_component.dm"
-#include "code\datum\buoy_ui\components\button.dm"
-#include "code\datum\buoy_ui\modules\_module.dm"
 #include "code\game\atoms.dm"
-#include "code\src\__buoy_design_doc.dm"
-#include "code\src\dmui_form.dm"
-#include "code\src\dmui_form_procs.dm"
 // END_INCLUDE
-
-// BEGIN_DEMO
-#ifdef __MAIN__
-#include "demo\disposal_bin.dm"
-#include "demo\kitchen.dm"
-#include "demo\newbie.dm"
-#endif
- // END_DEMO

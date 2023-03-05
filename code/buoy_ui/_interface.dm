@@ -7,11 +7,13 @@ var/global/static/buoy_module/buoy_module_by_interface = list()
 
 	var/name = "Buoy Interface"
 
-	var/tmp/buoy_module/modules
+	var/list/buoy_module/modules
 
 	var/list/blacklisted_vars = list(
-		"blacklisted_vars",
 		"abstract_type",
+		"blacklisted_vars",
+		"modules",
+		"name",
 		"tag",
 	)
 
@@ -92,7 +94,7 @@ var/global/static/buoy_module/buoy_module_by_interface = list()
 
 /buoy_interface/New()
 	. = ..()
-	if(modules)
+	if(islist(modules))
 		for(var/buoy_module/_module in modules)
 			modules[_module] = new(src)
 
